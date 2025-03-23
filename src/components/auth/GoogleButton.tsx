@@ -5,7 +5,7 @@ export default function GoogleButton() {
     `https://accounts.google.com/o/oauth2/v2/auth?` +
     `prompt=consent&` +
     `response_type=code&` +
-    `redirect_uri=${encodeURIComponent(import.meta.env.VITE_URL)}/auth/google/callback&` +
+    `redirect_uri=${encodeURIComponent(import.meta.env.VITE_URL + '/auth/google/callback')}&` +
     `client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&` +
     `scope=email%20profile&` +
     `access_type=offline`;
