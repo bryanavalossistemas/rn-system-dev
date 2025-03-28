@@ -1,81 +1,42 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 import { ArrowUpDownIcon } from 'lucide-react';
-import { TableCell, TableHead } from '@/components/ui/table';
-import { Brand } from '@/schemas/brands';
 import { Checkbox } from '@/components/ui/checkbox';
-import UpdateButtonDesktop from '@/components/admin/dashboard/brands/UpdateButtonDesktop';
 import RemoveButton from '@/components/admin/dashboard/brands/RemoveButton';
+import UpdateButton from '@/components/admin/dashboard/brands/UpdateButton';
+import { Brand } from '@/schemas/brands';
 
-export const columns: ColumnDef<Brand>[] = [
-  {
+const columnHelper = createColumnHelper<Brand>();
+
+export const columns = [
+  columnHelper.display({
     id: 'select',
     header: ({ table }) => (
-      <TableHead className="w-fit">
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </TableHead>
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
     ),
-    cell: ({ row }) => (
-      <TableCell className="w-fit">
-        <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
-      </TableCell>
-    ),
-    enableSorting: false,
+    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
     enableHiding: false,
-  },
-  {
-    accessorKey: 'id',
-    header: ({ column }) => {
-      return (
-        <TableHead className="w-fit">
-          <div className="inline-flex items-center gap-x-1 cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            <span>ID</span>
-            <ArrowUpDownIcon size={16} />
-          </div>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => (
-      <TableCell className="w-fit">
-        <div className="lowercase">{row.getValue('id')}</div>
-      </TableCell>
+  }),
+  columnHelper.accessor('name', {
+    header: ({ column }) => (
+      <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <span>Nombre</span>
+        <ArrowUpDownIcon className="size-4" />
+      </div>
     ),
-  },
-  {
-    accessorKey: 'name',
-    header: ({ column }) => {
-      return (
-        <TableHead className="w-full">
-          <div className="inline-flex items-center gap-x-1 cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            <span>Nombre</span>
-            <ArrowUpDownIcon size={16} />
-          </div>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => (
-      <TableCell className="w-full">
-        <div className="lowercase">{row.getValue('name')}</div>
-      </TableCell>
-    ),
-  },
-  {
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.display({
     id: 'action',
-    header: () => {
-      return <TableHead />;
-    },
     cell: ({ row }) => (
-      <TableCell className="w-fit">
-        <div className="flex gap-2 justify-end">
-          <UpdateButtonDesktop item={row.original} />
-          <RemoveButton id={row.getValue('id')} />
-        </div>
-      </TableCell>
+      <div className="flex gap-2 justify-end">
+        <UpdateButton item={row.original} />
+        <RemoveButton id={row.original.id} />
+      </div>
     ),
-    enableSorting: false,
     enableHiding: false,
-  },
+  }),
 ];

@@ -16,39 +16,37 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { TrashIcon } from 'lucide-react';
-import useStore from '@/store';
+import { useSearchParams } from 'react-router';
 
 interface RemoveButtonProps {
   id: Brand['id'];
 }
 
 export default function RemoveButton({ id }: RemoveButtonProps) {
-  const queryClient = useQueryClient();
-
   const [open, setOpen] = useState(false);
-
-  const { dateOptionBrands: dateOption } = useStore();
+  const [searchParams] = useSearchParams();
+  const date = searchParams.get('date');
+  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
     mutationFn: remove,
     onMutate: async ({ id }) => {
-      await queryClient.cancelQueries({ queryKey: ['brands', dateOption] });
+      await queryClient.cancelQueries({ queryKey: date === null ? ['categories'] : ['categories', date] });
 
-      const previousItems = queryClient.getQueryData(['brands', dateOption]);
+      const previousItems = queryClient.getQueryData(date === null ? ['categories'] : ['categories', date]);
 
-      queryClient.setQueryData(['brands', dateOption], (oldItems: Brand[]) => oldItems.filter((item) => item.id !== id));
+      queryClient.setQueryData(date === null ? ['categories'] : ['categories', date], (oldItems: Brand[]) =>
+        oldItems.filter((item) => item.id !== id),
+      );
 
       setOpen(false);
       toast.success('Marca eliminada correctamente');
 
       return { previousItems };
     },
-    onError: (_error, _variables, context) => {
-      toast.error('Parece que hubo un error al eliminar la marca');
-      queryClient.setQueryData(['brands', dateOption], context?.previousItems);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['brands', dateOption] });
+    onError: (error, _variables, context) => {
+      toast.error(error.message);
+      queryClient.setQueryData(date === null ? ['categories'] : ['categories', date], context?.previousItems);
     },
   });
 
@@ -69,11 +67,11 @@ export default function RemoveButton({ id }: RemoveButtonProps) {
           </Button>
         </div>
       </AlertDialogTrigger>
-      <AlertDialogContent className="max-w-[calc(100%-1.5rem)] p-2 sm:p-4">
+      <AlertDialogContent className="max-w-[calc(100%-1.5rem)] p-2 sm:p-4 sm:w-md">
         <AlertDialogHeader>
           <AlertDialogTitle>¿Estás completamente seguro?</AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no se puede deshacer. Borrará permanentemente la marca y eliminará sus datos de nuestros servidores.
+            Esta acción no se puede deshacer. Borrará permanentemente la marca y eliminará sus datos de nuestros servidores
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

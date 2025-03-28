@@ -6,52 +6,25 @@ import {
   PaginationState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { findAll } from '@/api/purchases';
+import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import TableSkeleton from '@/components/ui/table-skeleton';
 import { Card } from '@/components/ui/card';
 import UpdateButton from '@/components/admin/dashboard/purchases/UpdateButton';
 import RemoveButton from '@/components/admin/dashboard/purchases/RemoveButton';
 import { columns } from '@/components/admin/dashboard/purchases/Colums';
-import { getDateRange } from '@/lib/utils';
 import TableHeading from '@/components/admin/dashboard/purchases/TableHeading';
 import TableBody from '@/components/admin/dashboard/purchases/TableBody';
 import TablePagination from '@/components/admin/dashboard/purchases/TablePagination';
-import { useSearchParams } from 'react-router';
-import useStore from '@/store';
+import { pageSize } from '@/components/admin/dashboard/purchases/constants';
+import { usePurchases } from '@/hooks/usePurchases';
 
 export function Table() {
-  const [searchParams] = useSearchParams();
-
-  const { dateOptionPurchases: dateOption, setDateOptionPurchases: setDateOption } = useStore();
-
-  useEffect(() => {
-    const dateOptionParam = searchParams.get('date-option');
-    if (dateOptionParam) {
-      setDateOption(dateOptionParam);
-    } else {
-      setDateOption('month');
-    }
-  }, [searchParams, setDateOption]);
-
-  const {
-    data = [],
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ['purchases', dateOption],
-    queryFn: () => findAll(getDateRange({ dateOption })),
-    meta: {
-      persist: true,
-    },
-  });
+  const { data = [], isLoading } = usePurchases();
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: window.innerWidth < 640 ? 3 : 5,
+    pageSize: pageSize,
   });
 
   const table = useReactTable({
@@ -69,10 +42,6 @@ export function Table() {
 
   if (isLoading) {
     return <TableSkeleton columns={2} rows={8} cards={3} />;
-  }
-
-  if (isError) {
-    return <div>Error: {error.message}</div>;
   }
 
   return (

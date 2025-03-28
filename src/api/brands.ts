@@ -1,30 +1,48 @@
 import api from '@/config/axios';
-import { BrandsSchema, Brand, BrandSchema, CreateBrandForm, UpdateBrandForm } from '@/schemas/brands';
+import { delay, getDateRange } from '@/lib/utils';
+import { BrandsSchema, Brand, BrandSchema, BrandForm } from '@/schemas/brands';
+import { isAxiosError } from 'axios';
 
-export const create = async ({ formData }: { formData: CreateBrandForm }) => {
-  return BrandSchema.parse((await api.post('/brands', formData)).data);
+export const create = async ({ formData }: { formData: BrandForm }) => {
+  try {
+    return BrandSchema.parse((await api.post('/brands', formData)).data);
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message);
+    }
+  }
 };
 
-export const findAll = async ({ startDate, endDate }: { startDate?: string; endDate?: string }) => {
+export const findAll = async (date?: string | null) => {
+  await delay(3);
   let res;
 
-  if (startDate && endDate) {
-    res = await api.get(`/brands?startDate=${startDate}&endDate=${endDate}`);
-  } else {
+  if (date === null || date === undefined) {
     res = await api.get('/brands');
+  } else {
+    const { startDate, endDate } = getDateRange(date);
+    res = await api.get(`/brands?startDate=${startDate}&endDate=${endDate}`);
   }
 
   return BrandsSchema.parse(res.data);
 };
 
-export const findOne = async (id: Brand['id']) => {
-  return BrandSchema.parse((await api.get(`/brands/${id}`)).data);
-};
-
-export const update = async ({ id, formData }: { id: Brand['id']; formData: UpdateBrandForm }) => {
-  return BrandSchema.parse((await api.patch(`/brands/${id}`, formData)).data);
+export const update = async ({ id, formData }: { id: Brand['id']; formData: BrandForm }) => {
+  try {
+    return BrandSchema.parse((await api.patch(`/brands/${id}`, formData)).data);
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message);
+    }
+  }
 };
 
 export const remove = async ({ id }: { id: Brand['id'] }) => {
-  await api.delete(`/brands/${id}`);
+  try {
+    await api.delete(`/brands/${id}`);
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message);
+    }
+  }
 };

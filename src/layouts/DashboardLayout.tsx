@@ -1,4 +1,4 @@
-import DashboardSidebar from '@/components/admin/dashboard/DashboardSidebar';
+import DashboardSidebar from '@/components/admin/dashboard/ui/DashboardSidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { Outlet } from 'react-router';
 

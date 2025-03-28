@@ -11,31 +11,28 @@ import { Category } from '@/schemas/categories';
 import { ProductForm } from '@/schemas/products';
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { UseFormReturn, useWatch } from 'react-hook-form';
 
 interface FormFieldsProps {
   form: UseFormReturn<ProductForm>;
   categories: Category[];
   brands: Brand[];
-  oldImages?: {
-    path: string;
-    id: number;
-  }[];
 }
 
-export default function FormFields({ form, categories, brands, oldImages }: FormFieldsProps) {
+export default function FormFields({ form, categories, brands }: FormFieldsProps) {
   const [openPopoverCategories, setOpenPopoverCategories] = useState(false);
   const [openPopoverBrands, setOpenPopoverBrands] = useState(false);
   const [openDrawerCategories, setOpenDrawerCategories] = useState(false);
   const [openDrawerBrands, setOpenDrawerBrands] = useState(false);
-  const [images, setImages] = useState<File[]>([]);
-  const [productImages, setProductImages] = useState<ProductForm['oldImages']>(oldImages);
+  const newImages = useWatch({ control: form.control, name: 'newImages' });
+  const images = useWatch({ control: form.control, name: 'images' });
 
   const handleProductImageChange = (imageId: number) => {
-    if (productImages) {
-      const newProductImages = productImages.map((p) => (p.id !== imageId ? p : { ...p, deleted: true }));
-      setProductImages(newProductImages);
-      form.setValue('oldImages', newProductImages);
+    if (images.length > 0) {
+      form.setValue(
+        'images',
+        images.map((p) => (p.id !== imageId ? p : { ...p, deleted: true })),
+      );
     }
   };
 
@@ -46,8 +43,7 @@ export default function FormFields({ form, categories, brands, oldImages }: Form
       for (const file of files) {
         validImages.push(file);
       }
-      setImages(validImages);
-      form.setValue('images', validImages.length > 0 ? validImages : undefined);
+      form.setValue('newImages', validImages);
     }
   };
 
@@ -315,10 +311,10 @@ export default function FormFields({ form, categories, brands, oldImages }: Form
             </FormItem>
           )}
         />
-        {productImages && productImages.length > 0 && productImages.some((p) => p.deleted === undefined) && (
+        {images && images.length > 0 && images.some((p) => p.deleted === undefined) && (
           <>
             <div className="flex flex-wrap gap-4 justify-center">
-              {productImages.map(
+              {images.map(
                 (image, index) =>
                   !image.deleted && (
                     <div key={image.id} className="grid">
@@ -333,9 +329,9 @@ export default function FormFields({ form, categories, brands, oldImages }: Form
             <Separator />
           </>
         )}
-        {images.length > 0 && (
+        {newImages.length > 0 && (
           <div className="flex flex-wrap gap-4 justify-center">
-            {images.map((image, index) => (
+            {newImages.map((image, index) => (
               <img key={index} src={URL.createObjectURL(image)} alt={`Vista previa ${index + 1}`} className="w-28 h-28 object-cover rounded" />
             ))}
           </div>

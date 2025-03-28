@@ -4,13 +4,13 @@ import { Form } from '@/components/ui/form';
 import { Brand } from '@/schemas/brands';
 import { Category } from '@/schemas/categories';
 import { Product, ProductForm, ProductFormSchema } from '@/schemas/products';
-import useStore from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import FormFields from './FormFields';
+import FormFields from '@/components/admin/dashboard/products/FormFields';
+import { useSearchParams } from 'react-router';
 
 interface CreateFormProps {
   categories: Category[];
@@ -26,23 +26,26 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
       salePrice: 0,
       costPrice: 0,
       stock: 0,
+      categoryId: 0,
+      brandId: 0,
+      newImages: [],
     },
   });
 
+  const [searchParams] = useSearchParams();
+  const date = searchParams.get('date');
   const queryClient = useQueryClient();
-
-  const { dateOptionProducts: dateOption } = useStore();
 
   const { mutate, isPending } = useMutation({
     mutationFn: create,
     onMutate: async ({ formData }) => {
-      await queryClient.cancelQueries({ queryKey: ['products', dateOption] });
+      await queryClient.cancelQueries({ queryKey: date === null ? ['products'] : ['products', date] });
 
-      const previousItems = queryClient.getQueryData(['products', dateOption]);
+      const previousItems = queryClient.getQueryData(date === null ? ['products'] : ['products', date]);
 
-      const { name, salePrice, costPrice, stock, categoryId, brandId, images } = formData;
+      const { name, salePrice, costPrice, stock, categoryId, brandId, newImages } = formData;
 
-      const item: Omit<Product, 'active' | 'createdAt'> & {
+      const item: Omit<Product, 'createdAt'> & {
         isOptimistic?: boolean;
       } = {
         id: Date.now(),
@@ -52,11 +55,11 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
         stock: stock,
         categoryId: categoryId ?? null,
         brandId: brandId ?? null,
-        images: images && [{ id: Date.now(), path: URL.createObjectURL(images[images.length - 1]) }],
+        images: newImages.length > 0 ? [{ id: Date.now(), path: URL.createObjectURL(newImages[newImages.length - 1]) }] : [],
         isOptimistic: true,
       };
 
-      queryClient.setQueryData(['products', dateOption], (oldItems: Product[]) => {
+      queryClient.setQueryData(date === null ? ['products'] : ['products', date], (oldItems: (Product & { isOptimistic?: boolean })[]) => {
         return [item, ...oldItems];
       });
 
@@ -67,10 +70,10 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
     },
     onError: (error, _variables, context) => {
       toast.error(error.message);
-      queryClient.setQueryData(['products', dateOption], context?.previousItems);
+      queryClient.setQueryData(date === null ? ['products'] : ['products', date], context?.previousItems);
     },
     onSuccess: (newItem) => {
-      queryClient.setQueryData(['products', dateOption], (oldItems: Product & { isOptimistic?: boolean }[]) => {
+      queryClient.setQueryData(date === null ? ['products'] : ['products', date], (oldItems: (Product & { isOptimistic?: boolean })[]) => {
         return oldItems.map((item) => (item.isOptimistic ? newItem : item));
       });
     },
@@ -82,7 +85,7 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="p-2 h-96 overflow-scroll sm:h-fit sm:max-h-[750px] sm:overflow-auto">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="p-2">
         <FormFields form={form} categories={categories} brands={brands} />
         <div className="flex flex-col sm:flex-row-reverse gap-2 mt-2 sm:mt-4">
           <Button type="submit" disabled={isPending}>

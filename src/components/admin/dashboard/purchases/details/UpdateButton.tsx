@@ -3,46 +3,29 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, Dr
 import { PencilIcon, PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useQuery } from '@tanstack/react-query';
-import { findAll } from '@/api/products';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UseFormReturn } from 'react-hook-form';
-import { DetailForm, PurchaseForm } from '@/schemas/purchases';
-import UpdateForm from './UpdateForm';
+import { Detail, PurchaseForm } from '@/schemas/purchases';
+import UpdateForm from '@/components/admin/dashboard/purchases/details/UpdateForm';
+import { useProducts } from '@/hooks/useProducts';
 
 interface UpdateButtonProps {
   purchaseForm: UseFormReturn<PurchaseForm>;
-  item: DetailForm;
+  item: Detail;
 }
 
 export default function UpdateButton({ purchaseForm, item }: UpdateButtonProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const {
-    data: products = [],
-    isError,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['products'],
-    queryFn: () => findAll({}),
-    meta: {
-      persist: true,
-    },
-  });
+  const { data: products = [], isLoading } = useProducts();
 
   if (isLoading) {
     return (
       <>
-        <Skeleton className="w-full h-9 sm:hidden" />
-        <Skeleton className="hidden sm:inline-flex w-44 h-9" />
+        <Skeleton className="w-5 h-5" />
       </>
     );
-  }
-
-  if (isError) {
-    return <div>Error: {error.message}</div>;
   }
 
   return (

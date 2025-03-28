@@ -1,86 +1,73 @@
 import { create } from '@/api/categories';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { CreateCategoryForm as CreateCategoryFormType, CreateCategoryFormSchema, Category } from '@/schemas/categories';
-import useStore from '@/store';
+import { Form } from '@/components/ui/form';
+import { Category, CategoryForm, CategoryFormSchema } from '@/schemas/categories';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import FormFields from '@/components/admin/dashboard/categories/FormFields';
+import { useSearchParams } from 'react-router';
 
 interface CreateFormProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function CreateForm({ setOpen }: CreateFormProps) {
-  const form = useForm<CreateCategoryFormType>({
-    resolver: zodResolver(CreateCategoryFormSchema),
+  const form = useForm<CategoryForm>({
+    resolver: zodResolver(CategoryFormSchema),
     defaultValues: {
       name: '',
     },
   });
 
+  const [searchParams] = useSearchParams();
+  const date = searchParams.get('date');
   const queryClient = useQueryClient();
-
-  const { dateOptionCategories: dateOption } = useStore();
 
   const { mutate, isPending } = useMutation({
     mutationFn: create,
     onMutate: async ({ formData }) => {
-      await queryClient.cancelQueries({ queryKey: ['categories', dateOption] });
+      await queryClient.cancelQueries({ queryKey: date === null ? ['categories'] : ['categories', date] });
 
-      const previousCategories = queryClient.getQueryData(['categories', dateOption]);
+      const previousItems = queryClient.getQueryData(date === null ? ['categories'] : ['categories', date]);
 
-      const category = {
+      const { name } = formData;
+      const item: Omit<Category, 'createdAt'> & { isOptimistic: boolean } = {
         id: Date.now(),
-        ...formData,
+        name: name,
         isOptimistic: true,
       };
 
-      queryClient.setQueryData(['categories', dateOption], (oldCategories: Category[]) => {
-        return [category, ...oldCategories];
+      queryClient.setQueryData(date === null ? ['categories'] : ['categories', date], (oldItems: (Category & { isOptimistic?: boolean })[]) => {
+        return [item, ...oldItems];
       });
 
       toast.success('Categoría creada correctamente');
       setOpen(false);
 
-      return { previousCategories };
+      return { previousItems };
     },
-    onError: (_error, _variables, context) => {
-      toast.error('Parece que hubo un error al crear la categoría');
-      queryClient.setQueryData(['categories', dateOption], context?.previousCategories);
+    onError: (error, _variables, context) => {
+      toast.error(error.message);
+      queryClient.setQueryData(date === null ? ['categories'] : ['categories', date], context?.previousItems);
     },
-    onSuccess: (newCategory) => {
-      queryClient.setQueryData(['categories', dateOption], (oldCategories: Category & { isOptimistic?: boolean }[]) => {
-        return oldCategories.map((category) => (category.isOptimistic ? newCategory : category));
+    onSuccess: (newItem) => {
+      queryClient.setQueryData(date === null ? ['categories'] : ['categories', date], (oldItems: (Category & { isOptimistic?: boolean })[]) => {
+        return oldItems.map((item) => (item.isOptimistic ? newItem : item));
       });
     },
   });
 
-  const onSubmit = (formData: CreateCategoryFormType) => {
+  const onSubmit = (formData: CategoryForm) => {
     mutate({ formData });
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="p-2 sm:p-0">
-        <div>
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nombre</FormLabel>
-                <FormControl>
-                  <Input placeholder="Harinas" type="text" autoComplete="on" autoFocus {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="p-2">
+        <FormFields form={form} />
         <div className="flex flex-col sm:flex-row-reverse gap-2 mt-2 sm:mt-4">
           <Button type="submit" disabled={isPending}>
             Guardar

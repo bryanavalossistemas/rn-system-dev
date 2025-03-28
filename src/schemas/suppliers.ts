@@ -46,8 +46,3 @@ export const SupplierFormSchema = z
     }
   });
 export type SupplierForm = z.infer<typeof SupplierFormSchema>;
-
-export const RemoveSupplierFormSchema = z.object({
-  password: z.string().min(8, { message: 'La contraseña es obligatoria' }),
-});
-export type RemoveSupplierForm = z.infer<typeof RemoveSupplierFormSchema>;

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { DetailForm } from '@/schemas/purchases';
-import { useEffect, useState } from 'react';
-import { UseFormReturn, useWatch } from 'react-hook-form';
+import { useState } from 'react';
+import { UseFormReturn } from 'react-hook-form';
 import { Product } from '@/schemas/products';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
@@ -20,17 +20,6 @@ export default function FormFields({ form, products }: FormFieldsProps) {
   const [openProductsDrawer, setOpenProductsDrawer] = useState(false);
   const [openProductsPopover, setOpenProductsPopover] = useState(false);
 
-  const currentProductId = useWatch({ control: form.control, name: 'productId' });
-
-  useEffect(() => {
-    const selectedProduct = products.find((p) => String(p.id) === currentProductId);
-    if (selectedProduct) {
-      form.setValue('productName', selectedProduct.name);
-      form.setValue('quantity', form.getValues('quantity') || '1');
-      form.setValue('unitPrice', String(selectedProduct.salePrice));
-    }
-  }, [currentProductId, form, products]);
-
   return (
     <div className="grid gap-6">
       {/* PRODUCT ID */}
@@ -46,7 +35,7 @@ export default function FormFields({ form, products }: FormFieldsProps) {
                 <DrawerTrigger asChild>
                   <FormControl>
                     <Button variant="outline" role="combobox" className={cn('justify-between', !field.value && 'text-muted-foreground')}>
-                      {field.value ? products.find((product) => String(product.id) == field.value)?.name : 'Seleccionar producto'}
+                      {field.value ? products.find((product) => product.id === field.value)?.name : 'Seleccionar producto'}
                       <ChevronsUpDownIcon className="opacity-50" />
                     </Button>
                   </FormControl>
@@ -66,12 +55,12 @@ export default function FormFields({ form, products }: FormFieldsProps) {
                             value={product.name}
                             key={product.id}
                             onSelect={() => {
-                              form.setValue('productId', String(product.id));
+                              form.setValue('productId', product.id);
                               setOpenProductsDrawer(false);
                             }}
                           >
                             {product.name}
-                            <CheckIcon className={cn('ml-auto', String(product.id) === field.value ? 'opacity-100' : 'opacity-0')} />
+                            <CheckIcon className={cn('ml-auto', product.id === field.value ? 'opacity-100' : 'opacity-0')} />
                           </CommandItem>
                         ))}
                       </CommandGroup>
@@ -93,8 +82,10 @@ export default function FormFields({ form, products }: FormFieldsProps) {
               <Popover open={openProductsPopover} onOpenChange={setOpenProductsPopover}>
                 <PopoverTrigger asChild>
                   <FormControl>
-                    <Button variant="outline" role="combobox" className={cn('justify-between', !field.value && 'text-muted-foreground')}>
-                      {field.value ? products.find((product) => String(product.id) === field.value)?.name : 'Seleccionar producto'}
+                    <Button autoFocus variant="outline" role="combobox" className={cn('justify-between', !field.value && 'text-muted-foreground')}>
+                      <span className="sm:max-w-87 sm:truncate">
+                        {field.value ? products.find((product) => product.id === field.value)?.name : 'Seleccionar producto'}
+                      </span>
                       <ChevronsUpDownIcon className="opacity-50" />
                     </Button>
                   </FormControl>
@@ -110,12 +101,15 @@ export default function FormFields({ form, products }: FormFieldsProps) {
                             value={product.name}
                             key={product.id}
                             onSelect={() => {
-                              form.setValue('productId', String(product.id));
+                              form.setValue('productId', product.id);
+                              form.setValue('productName', product.name);
+                              form.setValue('quantity', 1);
+                              form.setValue('unitPrice', product.salePrice);
                               setOpenProductsPopover(false);
                             }}
                           >
                             {product.name}
-                            <CheckIcon className={cn('ml-auto', String(product.id) === field.value ? 'opacity-100' : 'opacity-0')} />
+                            <CheckIcon className={cn('ml-auto', product.id === field.value ? 'opacity-100' : 'opacity-0')} />
                           </CommandItem>
                         ))}
                       </CommandGroup>

@@ -1,14 +1,14 @@
 import { update } from '@/api/brands';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Brand, UpdateBrandFormSchema, UpdateBrandForm as UpdateBrandFormType } from '@/schemas/brands';
-import useStore from '@/store';
+import { Form } from '@/components/ui/form';
+import { Brand, BrandForm, BrandFormSchema } from '@/schemas/brands';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
+import { useSearchParams } from 'react-router';
 import { toast } from 'sonner';
+import FormFields from '@/components/admin/dashboard/brands/FormFields';
 
 interface UpdateFormProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -18,24 +18,31 @@ interface UpdateFormProps {
 export default function UpdateForm({ setOpen, item }: UpdateFormProps) {
   const { id, name } = item;
 
-  const form = useForm<UpdateBrandFormType>({
-    resolver: zodResolver(UpdateBrandFormSchema),
-    defaultValues: { name },
+  const form = useForm<BrandForm>({
+    resolver: zodResolver(BrandFormSchema),
+    defaultValues: { name: name },
   });
 
+  const [searchParams] = useSearchParams();
+  const date = searchParams.get('date');
   const queryClient = useQueryClient();
-
-  const { dateOptionBrands: dateOption } = useStore();
 
   const { mutate, isPending } = useMutation({
     mutationFn: update,
     onMutate: async ({ id, formData }) => {
-      await queryClient.cancelQueries({ queryKey: ['brands', dateOption] });
+      await queryClient.cancelQueries({ queryKey: date === null ? ['brands'] : ['brands', date] });
 
-      const previousItems = queryClient.getQueryData(['brands', dateOption]);
+      const previousItems = queryClient.getQueryData(date === null ? ['brands'] : ['brands', date]);
 
-      queryClient.setQueryData(['brands', dateOption], (oldItems: Brand[]) =>
-        oldItems.map((item) => (item.id === id ? { ...item, ...formData, isOptimistic: true } : item)),
+      const { name } = formData;
+      const updatedItem: Omit<Brand, 'createdAt'> & { isOptimistic: boolean } = {
+        id: id,
+        name: name,
+        isOptimistic: true,
+      };
+
+      queryClient.setQueryData(date === null ? ['brands'] : ['brands', date], (oldItems: (Brand & { isOptimistic?: boolean })[]) =>
+        oldItems.map((item) => (item.id === id ? updatedItem : item)),
       );
 
       setOpen(false);
@@ -43,47 +50,25 @@ export default function UpdateForm({ setOpen, item }: UpdateFormProps) {
 
       return { previousItems };
     },
-    onError: (_error, _variables, context) => {
-      toast.error('Parece que hubo un error al actualizar la marca');
-      queryClient.setQueryData(['brands', dateOption], context?.previousItems);
+    onError: (error, _variables, context) => {
+      toast.error(error.message);
+      queryClient.setQueryData(date === null ? ['brands'] : ['brands', date], context?.previousItems);
     },
     onSuccess: (newItem) => {
-      queryClient.setQueryData(['brands', dateOption], (oldItems: Brand & { isOptimistic?: boolean }[]) => {
+      queryClient.setQueryData(date === null ? ['brands'] : ['brands', date], (oldItems: (Brand & { isOptimistic?: boolean })[]) => {
         return oldItems.map((item) => (item.isOptimistic ? newItem : item));
       });
     },
   });
 
-  const onSubmit = (formData: UpdateBrandFormType) => {
+  const onSubmit = (formData: BrandForm) => {
     mutate({ id, formData });
   };
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.select();
-    }
-  }, []);
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="p-2 sm:p-0">
-        <div>
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nombre</FormLabel>
-                <FormControl>
-                  <Input placeholder="Anita" type="text" autoComplete="on" {...field} ref={inputRef} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="p-2">
+        <FormFields form={form} />
         <div className="flex flex-col sm:flex-row-reverse gap-2 mt-2 sm:mt-4">
           <Button type="submit" disabled={isPending}>
             Guardar

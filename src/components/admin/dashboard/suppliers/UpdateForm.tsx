@@ -2,13 +2,13 @@ import { update } from '@/api/suppliers';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Supplier, SupplierForm, SupplierFormSchema } from '@/schemas/suppliers';
-import useStore from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import FormFields from './FormFields';
+import FormFields from '@/components/admin/dashboard/suppliers/FormFields';
+import { useSearchParams } from 'react-router';
 
 interface UpdateFormProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -30,19 +30,18 @@ export default function UpdateForm({ setOpen, item }: UpdateFormProps) {
     },
   });
 
+  const [searchParams] = useSearchParams();
+  const date = searchParams.get('date');
   const queryClient = useQueryClient();
-
-  const { dateOptionSuppliers: dateOption } = useStore();
 
   const { mutate, isPending } = useMutation({
     mutationFn: update,
     onMutate: async ({ id, formData }) => {
-      await queryClient.cancelQueries({ queryKey: ['suppliers', dateOption] });
+      await queryClient.cancelQueries({ queryKey: date === null ? ['suppliers'] : ['suppliers', date] });
 
-      const previousItems = queryClient.getQueryData(['suppliers', dateOption]);
+      const previousItems = queryClient.getQueryData(date === null ? ['suppliers'] : ['suppliers', date]);
 
       const { name, type, document, address, phone, email } = formData;
-
       const updatedItem: Omit<Supplier, 'status' | 'createdAt'> & {
         isOptimistic?: boolean;
       } = {
@@ -56,7 +55,9 @@ export default function UpdateForm({ setOpen, item }: UpdateFormProps) {
         isOptimistic: true,
       };
 
-      queryClient.setQueryData(['suppliers', dateOption], (oldItems: Supplier[]) => oldItems.map((item) => (item.id === id ? updatedItem : item)));
+      queryClient.setQueryData(date === null ? ['suppliers'] : ['suppliers', date], (oldItems: (Supplier & { isOptimistic?: boolean })[]) =>
+        oldItems.map((item) => (item.id === id ? updatedItem : item)),
+      );
 
       setOpen(false);
       toast.success('Proveedor actualizado correctamente');
@@ -65,10 +66,10 @@ export default function UpdateForm({ setOpen, item }: UpdateFormProps) {
     },
     onError: (error, _variables, context) => {
       toast.error(error.message);
-      queryClient.setQueryData(['suppliers', dateOption], context?.previousItems);
+      queryClient.setQueryData(date === null ? ['suppliers'] : ['suppliers', date], context?.previousItems);
     },
     onSuccess: (newItem) => {
-      queryClient.setQueryData(['suppliers', dateOption], (oldItems: Supplier & { isOptimistic?: boolean }[]) => {
+      queryClient.setQueryData(date === null ? ['suppliers'] : ['suppliers', date], (oldItems: (Supplier & { isOptimistic?: boolean })[]) => {
         return oldItems.map((item) => (item.isOptimistic ? newItem : item));
       });
     },

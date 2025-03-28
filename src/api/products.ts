@@ -1,18 +1,19 @@
 import api from '@/config/axios';
+import { delay, getDateRange } from '@/lib/utils';
 import { ProductSchema, ProductsSchema, Product, ProductForm } from '@/schemas/products';
 import { isAxiosError } from 'axios';
 
 export const create = async ({ formData: data }: { formData: ProductForm }) => {
   const formData = new FormData();
-  const { name, salePrice, costPrice, stock, categoryId, brandId, images } = data;
+  const { name, salePrice, costPrice, stock, categoryId, brandId, newImages } = data;
   formData.append('name', name);
   formData.append('salePrice', `${salePrice}`);
   formData.append('costPrice', `${costPrice}`);
   formData.append('stock', `${stock}`);
   if (categoryId) formData.append('categoryId', `${categoryId}`);
   if (brandId) formData.append('brandId', `${brandId}`);
-  if (images) {
-    images.forEach((image) => {
+  if (newImages.length > 0) {
+    newImages.forEach((image) => {
       formData.append('images', image);
     });
   }
@@ -26,34 +27,32 @@ export const create = async ({ formData: data }: { formData: ProductForm }) => {
   }
 };
 
-export const findAll = async ({ startDate, endDate }: { startDate?: string; endDate?: string }) => {
+export const findAll = async (date?: string | null) => {
+  await delay(3);
   let res;
 
-  if (startDate && endDate) {
-    res = await api.get(`/products?startDate=${startDate}&endDate=${endDate}`);
-  } else {
+  if (date === null || date === undefined) {
     res = await api.get('/products');
+  } else {
+    const { startDate, endDate } = getDateRange(date);
+    res = await api.get(`/products?startDate=${startDate}&endDate=${endDate}`);
   }
 
   return ProductsSchema.parse(res.data);
 };
 
-export const findOne = async (id: Product['id']) => {
-  return ProductSchema.parse((await api.get(`/products/${id}`)).data);
-};
-
 export const update = async ({ id, formData: data }: { id: Product['id']; formData: ProductForm }) => {
   const formData = new FormData();
-  const { name, salePrice, costPrice, stock, categoryId, brandId, images, oldImages } = data;
+  const { name, salePrice, costPrice, stock, categoryId, brandId, images, newImages } = data;
   formData.append('name', name);
   formData.append('salePrice', `${salePrice}`);
   formData.append('costPrice', `${costPrice}`);
   formData.append('stock', `${stock}`);
   if (categoryId) formData.append('categoryId', `${categoryId}`);
   if (brandId) formData.append('brandId', `${brandId}`);
-  if (oldImages) formData.append('oldImages', JSON.stringify(oldImages));
-  if (images) {
-    images.forEach((image) => {
+  if (images) formData.append('oldImages', JSON.stringify(images));
+  if (newImages) {
+    newImages.forEach((image) => {
       formData.append('images', image);
     });
   }

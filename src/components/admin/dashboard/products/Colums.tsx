@@ -1,144 +1,111 @@
-import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDownIcon, ImageIcon } from 'lucide-react';
-import { TableCell, TableHead } from '@/components/ui/table';
+import { createColumnHelper } from '@tanstack/react-table';
+import { ArrowUpDownIcon } from 'lucide-react';
 import { Product } from '@/schemas/products';
 import { Checkbox } from '@/components/ui/checkbox';
 import RemoveButton from '@/components/admin/dashboard/products/RemoveButton';
 import { formatCurrency } from '@/lib/utils';
-import UpdateButton from './UpdateButton';
+import UpdateButton from '@/components/admin/dashboard/products/UpdateButton';
 
-export const columns: ColumnDef<Product>[] = [
-  {
+const columnHelper = createColumnHelper<Product>();
+
+export const columns = [
+  columnHelper.display({
     id: 'select',
     header: ({ table }) => (
-      <TableHead>
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </TableHead>
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
     ),
-    cell: ({ row }) => (
-      <TableCell>
-        <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
-      </TableCell>
-    ),
-    enableSorting: false,
+    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
     enableHiding: false,
-  },
-  {
-    accessorKey: 'images',
-    header: ({ column }) => {
-      return (
-        <TableHead className="w-1/12 text-center">
-          <div className="inline-flex items-center gap-x-1 cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            <span>Imagen</span>
-            <ArrowUpDownIcon size={16} />
-          </div>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => {
-      if (row.original.images && row.original.images.length > 0) {
+  }),
+
+  columnHelper.accessor('images', {
+    header: () => (
+      <div className="flex items-center gap-1 justify-center">
+        <span>Imagen</span>
+        <ArrowUpDownIcon className="size-4" />
+      </div>
+    ),
+    cell: (info) => {
+      const images = info.getValue();
+      if (images && images.length > 0) {
         return (
-          <TableCell>
-            <div className="flex justify-center">
-              <div className="w-20 h-20 p-2.5">
-                <img className="w-full h-full object-cover rounded-sm" src={`${row.original.images[0].path}`} />
-              </div>
+          <div className="flex justify-center">
+            <div className="w-20 h-20">
+              <img className="w-full h-full object-cover rounded-sm" src={`${images[0].path}`} />
             </div>
-          </TableCell>
+          </div>
         );
       } else {
         return (
-          <TableCell>
-            <div className="flex justify-center">
-              <ImageIcon className="text-muted-foreground w-20 h-20" strokeWidth={0.8} />
+          <div className="flex justify-center">
+            <div className="w-20 h-20">
+              <img className="w-full h-full object-cover rounded-sm" src="/placeholder.svg" />
             </div>
-          </TableCell>
+          </div>
         );
       }
     },
-  },
-  {
-    accessorKey: 'name',
-    header: ({ column }) => {
-      return (
-        <TableHead>
-          <div className="inline-flex items-center gap-x-1 cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            <span>Nombre</span>
-            <ArrowUpDownIcon size={16} />
-          </div>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => <TableCell className="whitespace-normal">{row.original.name}</TableCell>,
-  },
-  {
-    accessorKey: 'stock',
-    header: ({ column }) => {
-      return (
-        <TableHead className="text-center">
-          <div className="inline-flex items-center gap-x-1 cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            <span>Stock</span>
-            <ArrowUpDownIcon size={16} />
-          </div>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => <TableCell className="text-center font-semibold">{row.original.stock}</TableCell>,
-  },
-  {
-    accessorKey: 'costPrice',
-    header: ({ column }) => {
-      return (
-        <TableHead className="text-center">
-          <div className="inline-flex items-center gap-x-1 cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            <span>Costo</span>
-            <ArrowUpDownIcon size={16} />
-          </div>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => (
-      <TableCell>
-        <div className="font-semibold text-center">{formatCurrency(row.original.costPrice)}</div>
-      </TableCell>
-    ),
-  },
-  {
-    accessorKey: 'salePrice',
-    header: ({ column }) => {
-      return (
-        <TableHead className="text-center">
-          <div className="inline-flex items-center gap-x-1 cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            <span>Venta</span>
-            <ArrowUpDownIcon size={16} />
-          </div>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => (
-      <TableCell>
-        <div className="font-semibold text-center">{formatCurrency(row.original.salePrice)}</div>
-      </TableCell>
-    ),
-  },
-  {
-    id: 'action',
-    header: () => {
-      return <TableHead className="w-1/12" />;
-    },
-    cell: ({ row }) => (
-      <TableCell>
-        <div className="flex gap-2 justify-end">
-          <UpdateButton item={row.original} />
-          <RemoveButton id={row.original.id} />
-        </div>
-      </TableCell>
-    ),
     enableSorting: false,
+  }),
+
+  columnHelper.accessor('name', {
+    header: ({ column }) => (
+      <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <span>Nombre</span>
+        <ArrowUpDownIcon className="size-4" />
+      </div>
+    ),
+    cell: (info) => <div className="whitespace-normal">{info.getValue()}</div>,
+  }),
+
+  columnHelper.accessor('stock', {
+    header: ({ column }) => (
+      <div className="flex justify-center">
+        <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          <span>Stock</span>
+          <ArrowUpDownIcon className="size-4" />
+        </div>
+      </div>
+    ),
+    cell: (info) => <div className="flex justify-center">{info.getValue()}</div>,
+  }),
+
+  columnHelper.accessor('costPrice', {
+    header: ({ column }) => (
+      <div className="flex justify-end">
+        <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          <span>Costo</span>
+          <ArrowUpDownIcon className="size-4" />
+        </div>
+      </div>
+    ),
+    cell: (info) => <div className="flex justify-end">{formatCurrency(info.getValue())}</div>,
+  }),
+
+  columnHelper.accessor('salePrice', {
+    header: ({ column }) => (
+      <div className="flex justify-end">
+        <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          <span>Venta</span>
+          <ArrowUpDownIcon className="size-4" />
+        </div>
+      </div>
+    ),
+    cell: (info) => <div className="flex justify-end">{formatCurrency(info.getValue())}</div>,
+  }),
+
+  columnHelper.display({
+    id: 'action',
+    cell: ({ row }) => (
+      <div className="flex gap-2 justify-end">
+        <UpdateButton item={row.original} />
+        <RemoveButton id={row.original.id} />
+      </div>
+    ),
     enableHiding: false,
-  },
+  }),
 ];

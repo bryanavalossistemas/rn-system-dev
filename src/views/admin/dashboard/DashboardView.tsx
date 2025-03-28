@@ -1,4 +1,4 @@
-import DashboardHeader from '@/components/admin/dashboard/DashboardHeader';
+import DashboardHeader from '@/components/admin/dashboard/ui/DashboardHeader';
 import { SidebarInset } from '@/components/ui/sidebar';
 
 export default function DashboardView() {

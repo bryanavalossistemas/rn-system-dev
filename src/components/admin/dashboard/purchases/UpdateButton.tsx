@@ -5,9 +5,8 @@ import { useState } from 'react';
 import UpdateForm from '@/components/admin/dashboard/purchases/UpdateForm';
 import { Purchase } from '@/schemas/purchases';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useQuery } from '@tanstack/react-query';
-import { findAll } from '@/api/suppliers';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useSuppliers } from '@/hooks/useSuppliers';
 
 interface UpdateButtonProps {
   item: Purchase;
@@ -17,18 +16,7 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const {
-    data: suppliers = [],
-    isError,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['suppliers'],
-    queryFn: () => findAll({}),
-    meta: {
-      persist: true,
-    },
-  });
+  const { data: suppliers = [], isLoading } = useSuppliers();
 
   if (isLoading) {
     return (
@@ -37,10 +25,6 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
         <Skeleton className="hidden sm:inline-flex w-44 h-9" />
       </>
     );
-  }
-
-  if (isError) {
-    return <div>Error: {error.message}</div>;
   }
 
   return (
@@ -54,7 +38,7 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Editar Compra</DrawerTitle>
-            <DrawerDescription>Actualice los datos de la Compra</DrawerDescription>
+            <DrawerDescription>Actualice los datos de la compra</DrawerDescription>
           </DrawerHeader>
           <UpdateForm setOpen={setOpenDrawer} item={item} suppliers={suppliers} />
         </DrawerContent>
@@ -67,10 +51,10 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
             <PencilIcon />
           </Button>
         </DialogTrigger>
-        <DialogContent className="min-w-[75vw] min-h-[50vh] flex flex-col">
+        <DialogContent className="min-w-200 min-h-[50svh] max-h-[85svh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Editar Compra</DialogTitle>
-            <DialogDescription>Actualice los datos de la Compra</DialogDescription>
+            <DialogDescription>Actualice los datos de la compra</DialogDescription>
           </DialogHeader>
           <UpdateForm setOpen={setOpenDialog} item={item} suppliers={suppliers} />
         </DialogContent>

@@ -7,10 +7,10 @@ import { Category } from '@/schemas/categories';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface UpdateButtonProps {
-  category: Category;
+  item: Category;
 }
 
-export default function UpdateButton({ category }: UpdateButtonProps) {
+export default function UpdateButton({ item }: UpdateButtonProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -25,9 +25,9 @@ export default function UpdateButton({ category }: UpdateButtonProps) {
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Editar Categoría</DrawerTitle>
-            <DrawerDescription>Actualiza el formulario para editar una categoria.</DrawerDescription>
+            <DrawerDescription>Actualiza el formulario para editar una categoria</DrawerDescription>
           </DrawerHeader>
-          <UpdateForm setOpen={setOpenDrawer} category={category} />
+          <UpdateForm setOpen={setOpenDrawer} item={item} />
         </DrawerContent>
       </Drawer>
 
@@ -38,12 +38,12 @@ export default function UpdateButton({ category }: UpdateButtonProps) {
             <PencilIcon />
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-sm">
           <DialogHeader>
             <DialogTitle>Editar Categoría</DialogTitle>
-            <DialogDescription>Actualiza el formulario para editar una categoria.</DialogDescription>
+            <DialogDescription>Actualiza el formulario para editar una categoria</DialogDescription>
           </DialogHeader>
-          <UpdateForm setOpen={setOpenDialog} category={category} />
+          <UpdateForm setOpen={setOpenDialog} item={item} />
         </DialogContent>
       </Dialog>
     </>

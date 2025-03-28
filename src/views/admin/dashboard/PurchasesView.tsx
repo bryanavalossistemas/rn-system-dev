@@ -1,5 +1,5 @@
-import DashboardHeader from '@/components/admin/dashboard/DashboardHeader';
-import DashboardTitle from '@/components/admin/dashboard/DashboardTitle';
+import DashboardHeader from '@/components/admin/dashboard/ui/DashboardHeader';
+import DashboardTitle from '@/components/admin/dashboard/ui/DashboardTitle';
 import { Separator } from '@/components/ui/separator';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { Table } from '@/components/admin/dashboard/purchases/Table';

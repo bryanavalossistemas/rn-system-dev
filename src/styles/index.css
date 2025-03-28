@@ -119,6 +119,10 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@theme {
+  --color-blue-invoice: oklch(0.37 0.19 263.99);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -6,52 +6,25 @@ import {
   PaginationState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { findAll } from '@/api/suppliers';
+import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import TableSkeleton from '@/components/ui/table-skeleton';
 import { Card } from '@/components/ui/card';
 import UpdateButton from '@/components/admin/dashboard/suppliers/UpdateButton';
 import RemoveButton from '@/components/admin/dashboard/suppliers/RemoveButton';
 import { columns } from '@/components/admin/dashboard/suppliers/Colums';
-import { getDateRange } from '@/lib/utils';
 import TableHeading from '@/components/admin/dashboard/suppliers/TableHeading';
 import TableBody from '@/components/admin/dashboard/suppliers/TableBody';
 import TablePagination from '@/components/admin/dashboard/suppliers/TablePagination';
-import { useSearchParams } from 'react-router';
-import useStore from '@/store';
+import { pageSize } from '@/components/admin/dashboard/suppliers/constants';
+import { useSuppliers } from '@/hooks/useSuppliers';
 
 export function Table() {
-  const [searchParams] = useSearchParams();
-
-  const { dateOptionSuppliers: dateOption, setDateOptionSuppliers: setDateOption } = useStore();
-
-  useEffect(() => {
-    const dateOptionParam = searchParams.get('date-option');
-    if (dateOptionParam) {
-      setDateOption(dateOptionParam);
-    } else {
-      setDateOption('always');
-    }
-  }, [searchParams, setDateOption]);
-
-  const {
-    data = [],
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ['suppliers', dateOption],
-    queryFn: () => findAll(getDateRange({ dateOption })),
-    meta: {
-      persist: true,
-    },
-  });
+  const { data = [], isLoading } = useSuppliers();
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: window.innerWidth < 640 ? 3 : 5,
+    pageSize: pageSize,
   });
 
   const table = useReactTable({
@@ -62,17 +35,13 @@ export function Table() {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     state: {
-      pagination: pagination,
+      pagination,
     },
     onPaginationChange: setPagination,
   });
 
   if (isLoading) {
     return <TableSkeleton columns={2} rows={8} cards={3} />;
-  }
-
-  if (isError) {
-    return <div>Error: {error.message}</div>;
   }
 
   return (

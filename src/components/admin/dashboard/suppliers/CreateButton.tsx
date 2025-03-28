@@ -30,12 +30,12 @@ export default function CreateButton() {
       {/* DESKTOP */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
-          <Button className="hidden sm:inline-flex w-44">
+          <Button className="hidden sm:flex">
             <span>Añadir Proveedor</span>
             <PlusIcon strokeWidth={3} />
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-md">
           <DialogHeader>
             <DialogTitle>Nuevo Proveedor</DialogTitle>
             <DialogDescription>Rellene el formulario para crear un proveedor</DialogDescription>

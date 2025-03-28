@@ -1,9 +1,8 @@
-export interface Columnas {
+export interface Columns {
   [key: string]: string;
 }
 
-export const columnas: Columnas = {
-  id: 'Id',
+export const columns: Columns = {
   images: 'Imagen',
   name: 'Nombre',
   stock: 'Stock',
@@ -11,10 +10,10 @@ export const columnas: Columnas = {
   salePrice: 'Venta',
 };
 
-export const dateRange = [
-  { id: 1, label: 'Este mes', value: 'month' },
-  { id: 2, label: 'Este año', value: 'year' },
-  { id: 3, label: 'Siempre', value: 'always' },
+export const dateOptions = [
+  { id: 1, label: 'Este mes', value: 'this-month' },
+  { id: 2, label: 'Este año', value: 'this-year' },
+  { id: 3, label: 'Siempre', value: null },
 ];
 
 export const columnsToExport = [
@@ -25,5 +24,4 @@ export const columnsToExport = [
   { header: 'Venta', key: 'salePrice' },
 ];
 
-export const PAGE_INDEX = 0;
-export const PAGE_SIZE = 5;
+export const pageSize = window.innerWidth < 640 ? 3 : 5;

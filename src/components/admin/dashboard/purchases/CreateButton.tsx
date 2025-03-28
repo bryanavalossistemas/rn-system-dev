@@ -4,26 +4,14 @@ import { PlusIcon } from 'lucide-react';
 import CreateForm from '@/components/admin/dashboard/purchases/CreateForm';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useQuery } from '@tanstack/react-query';
-import { findAll } from '@/api/suppliers';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useSuppliers } from '@/hooks/useSuppliers';
 
 export default function CreateButton() {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const {
-    data: suppliers = [],
-    isError,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['suppliers'],
-    queryFn: () => findAll({}),
-    meta: {
-      persist: true,
-    },
-  });
+  const { data: suppliers = [], isLoading } = useSuppliers();
 
   if (isLoading) {
     return (
@@ -32,10 +20,6 @@ export default function CreateButton() {
         <Skeleton className="hidden sm:inline-flex w-44 h-9" />
       </>
     );
-  }
-
-  if (isError) {
-    return <div>Error: {error.message}</div>;
   }
 
   return (
@@ -59,12 +43,12 @@ export default function CreateButton() {
       {/* DESKTOP */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
-          <Button className="hidden sm:inline-flex w-44">
+          <Button className="hidden sm:inline-flex">
             <span>Añadir Compra</span>
             <PlusIcon strokeWidth={3} />
           </Button>
         </DialogTrigger>
-        <DialogContent className='min-w-[75vw] min-h-[50vh] flex flex-col' >
+        <DialogContent className="min-w-200 min-h-[50svh] max-h-[85svh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Nueva Compra</DialogTitle>
             <DialogDescription>Rellene el formulario para crear una compra</DialogDescription>

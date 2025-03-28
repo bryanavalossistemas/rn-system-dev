@@ -3,11 +3,9 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { exportToExcel } from '@/lib/utils';
-import { columnas, columnsToExport, dateRange } from '@/components/admin/dashboard/brands/constants';
+import { columns, columnsToExport, dateOptions } from '@/components/admin/dashboard/brands/constants';
 import { Table } from '@tanstack/react-table';
-import useStore from '@/store';
 import { useSearchParams } from 'react-router';
 
 interface TableHeadingProps<T> {
@@ -17,14 +15,14 @@ interface TableHeadingProps<T> {
 
 export default function TableHeading<T>({ table, data }: TableHeadingProps<T>) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { dateOptionBrands: dateOption } = useStore();
+  const date = searchParams.get('date');
 
-  const setDateOptionParam = (newDateOption: string) => {
-    if (newDateOption === 'always') {
-      searchParams.delete('date-option');
+  const onChangeDate = (date: string | null) => {
+    if (date === null) {
+      searchParams.delete('date');
       setSearchParams(searchParams);
     } else {
-      setSearchParams({ 'date-option': newDateOption });
+      setSearchParams({ date: date });
     }
   };
 
@@ -44,40 +42,43 @@ export default function TableHeading<T>({ table, data }: TableHeadingProps<T>) {
           <span className="hidden sm:block">Excel</span>
           <DownloadIcon strokeWidth={2.5} />
         </Button>
-        <Select value={dateOption} onValueChange={setDateOptionParam}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent align="end">
-            {dateRange.map((dateOption) => (
-              <SelectItem key={dateOption.id} value={dateOption.value}>
-                {dateOption.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* DATERANGE OPTION */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
-              Columnas <ChevronDown />
+              <span>{dateOptions.find((p) => p.value === date)?.label}</span>
+              <ChevronDown />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {dateOptions.map((p) => (
+              <DropdownMenuCheckboxItem key={p.id} checked={p.value === date} onCheckedChange={() => onChangeDate(p.value)}>
+                {p.label}
+              </DropdownMenuCheckboxItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {/* DISPLAY COLUMNS */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              <span>Columnas</span>
+              <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {columnas[column.id]}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {columns[column.id]}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -85,12 +86,12 @@ export default function TableHeading<T>({ table, data }: TableHeadingProps<T>) {
         <div className="flex-1 relative">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            className="pl-8"
             id="search"
             type="search"
             placeholder="Buscar marca"
-            value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-            onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
+            value={table.getState().globalFilter ?? ''}
+            onChange={(e) => table.setGlobalFilter(e.target.value)}
+            className="pl-8"
           />
         </div>
         <Checkbox

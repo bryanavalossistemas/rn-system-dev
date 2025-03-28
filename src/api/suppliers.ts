@@ -1,4 +1,5 @@
 import api from '@/config/axios';
+import { delay, getDateRange } from '@/lib/utils';
 import { SupplierForm, Supplier, SupplierSchema, SuppliersSchema } from '@/schemas/suppliers';
 import { isAxiosError } from 'axios';
 
@@ -22,20 +23,18 @@ export const create = async ({ formData: data }: { formData: SupplierForm }) => 
   }
 };
 
-export const findAll = async ({ startDate, endDate }: { startDate?: string; endDate?: string }) => {
+export const findAll = async (date?: string | null) => {
+  await delay(3);
   let res;
 
-  if (startDate && endDate) {
-    res = await api.get(`/suppliers?startDate=${startDate}&endDate=${endDate}`);
-  } else {
+  if (date === null || date === undefined) {
     res = await api.get('/suppliers');
+  } else {
+    const { startDate, endDate } = getDateRange(date);
+    res = await api.get(`/suppliers?startDate=${startDate}&endDate=${endDate}`);
   }
 
   return SuppliersSchema.parse(res.data);
-};
-
-export const findOne = async ({ id }: { id: Supplier['id'] }) => {
-  return SupplierSchema.parse((await api.get(`/suppliers/${id}`)).data);
 };
 
 export const update = async ({ id, formData: data }: { id: Supplier['id']; formData: SupplierForm }) => {

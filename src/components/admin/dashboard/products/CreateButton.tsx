@@ -4,40 +4,22 @@ import { PlusIcon } from 'lucide-react';
 import CreateForm from '@/components/admin/dashboard/products/CreateForm';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { findAll as findAllCategories } from '@/api/categories';
-import { findAll as findAllBrands } from '@/api/brands';
-import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCategories } from '@/hooks/useCategories';
+import { useBrands } from '@/hooks/useBrands';
 
-export default function CreateButton() {
+interface CreateButtonProps {
+  className?: string;
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | null | undefined;
+}
+
+export default function CreateButton({ className, variant }: CreateButtonProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const {
-    data: categories = [],
-    isError: isErrorCategories,
-    isLoading: isLoadingCategories,
-    error: errorCategories,
-  } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => findAllCategories({}),
-    meta: {
-      persist: true,
-    },
-  });
+  const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
 
-  const {
-    data: brands = [],
-    isError: isErrorBrands,
-    isLoading: isLoadingBrands,
-    error: errorBrands,
-  } = useQuery({
-    queryKey: ['brands'],
-    queryFn: () => findAllBrands({}),
-    meta: {
-      persist: true,
-    },
-  });
+  const { data: brands = [], isLoading: isLoadingBrands } = useBrands();
 
   if (isLoadingCategories || isLoadingBrands) {
     return (
@@ -45,14 +27,6 @@ export default function CreateButton() {
         <Skeleton className="w-full h-9 sm:hidden" />
         <Skeleton className="hidden sm:inline-flex w-44 h-9" />
       </>
-    );
-  }
-
-  if (isErrorCategories || isErrorBrands) {
-    return (
-      <div>
-        Error: {errorCategories?.message} {errorBrands?.message}
-      </div>
     );
   }
 
@@ -77,12 +51,12 @@ export default function CreateButton() {
       {/* DESKTOP */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
-          <Button className="hidden sm:inline-flex w-44">
+          <Button className={`hidden sm:inline-flex ${className}`} variant={variant ?? 'default'}>
             <span>Añadir Producto</span>
             <PlusIcon strokeWidth={3} />
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-md max-h-[95svh] overflow-auto">
           <DialogHeader>
             <DialogTitle>Nuevo Producto</DialogTitle>
             <DialogDescription>Rellene el formulario para crear un producto</DialogDescription>

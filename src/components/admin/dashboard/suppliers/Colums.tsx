@@ -1,87 +1,64 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 import { ArrowUpDownIcon } from 'lucide-react';
-import { TableCell, TableHead } from '@/components/ui/table';
 import { Supplier } from '@/schemas/suppliers';
 import { Checkbox } from '@/components/ui/checkbox';
 import RemoveButton from '@/components/admin/dashboard/suppliers/RemoveButton';
-import UpdateButton from './UpdateButton';
+import UpdateButton from '@/components/admin/dashboard/suppliers/UpdateButton';
 
-export const columns: ColumnDef<Supplier>[] = [
-  {
+const columnHelper = createColumnHelper<Supplier>();
+
+export const columns = [
+  columnHelper.display({
     id: 'select',
     header: ({ table }) => (
-      <TableHead>
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </TableHead>
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
     ),
-    cell: ({ row }) => (
-      <TableCell>
-        <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
-      </TableCell>
-    ),
-    enableSorting: false,
+    cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
     enableHiding: false,
-  },
-  {
-    accessorKey: 'name',
-    header: ({ column }) => {
-      return (
-        <TableHead>
-          <div className="inline-flex items-center gap-x-1 cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            <span>Nombre</span>
-            <ArrowUpDownIcon size={16} />
-          </div>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => <TableCell className="whitespace-normal">{row.original.name}</TableCell>,
-  },
-  {
-    accessorKey: 'type',
-    header: ({ column }) => {
-      return (
-        <TableHead className="text-left">
-          <div className="inline-flex items-center gap-x-1 cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            <span>Tipo</span>
-            <ArrowUpDownIcon size={16} />
-          </div>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => <TableCell className="text-left font-semibold capitalize">{row.original.type}</TableCell>,
-  },
-  {
-    accessorKey: 'document',
-    header: ({ column }) => {
-      return (
-        <TableHead className="text-left">
-          <div className="inline-flex gap-x-1 cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            <span>Número</span>
-            <ArrowUpDownIcon size={16} />
-          </div>
-        </TableHead>
-      );
-    },
-    cell: ({ row }) => <TableCell className="text-left font-semibold">{row.original.document}</TableCell>,
-  },
-  {
+  }),
+
+  columnHelper.accessor('name', {
+    header: ({ column }) => (
+      <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <span>Nombre</span>
+        <ArrowUpDownIcon className="size-4" />
+      </div>
+    ),
+    cell: (info) => <div className="whitespace-normal">{info.getValue()}</div>,
+  }),
+
+  columnHelper.accessor('type', {
+    header: ({ column }) => (
+      <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <span>RUC/DNI</span>
+        <ArrowUpDownIcon className="size-4" />
+      </div>
+    ),
+    cell: (info) => info.getValue(),
+  }),
+
+  columnHelper.accessor('document', {
+    header: ({ column }) => (
+      <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <span>N° Documento</span>
+        <ArrowUpDownIcon className="size-4" />
+      </div>
+    ),
+    cell: (info) => info.getValue(),
+  }),
+
+  columnHelper.display({
     id: 'action',
-    header: () => {
-      return <TableHead className="w-1/12" />;
-    },
     cell: ({ row }) => (
-      <TableCell>
-        <div className="flex gap-2 justify-end">
-          <UpdateButton item={row.original} />
-          <RemoveButton id={row.original.id} />
-        </div>
-      </TableCell>
+      <div className="flex gap-2 justify-end">
+        <UpdateButton item={row.original} />
+        <RemoveButton id={row.original.id} />
+      </div>
     ),
-    enableSorting: false,
     enableHiding: false,
-  },
+  }),
 ];

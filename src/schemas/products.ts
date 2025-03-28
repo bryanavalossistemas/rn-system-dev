@@ -9,7 +9,6 @@ export const ProductSchema = z.object({
   categoryId: z.number().int().nullable(),
   brandId: z.number().int().nullable(),
   images: z.array(z.object({ id: z.number().int(), path: z.string() })).optional(),
-  active: z.boolean(),
   createdAt: z.date({ coerce: true }),
 });
 export type Product = z.infer<typeof ProductSchema>;
@@ -38,17 +37,15 @@ export const ProductFormSchema = z.object({
   stock: z.number({ coerce: true }).int({ message: 'Deber ser un número entero' }).min(0, {
     message: 'El número debe ser mayor o igual a cero.',
   }),
-  categoryId: z.number().int().optional(),
-  brandId: z.number().int().optional(),
-  images: z.array(z.instanceof(File)).optional(),
-  oldImages: z
-    .array(
-      z.object({
-        id: z.number().int(),
-        path: z.string(),
-        deleted: z.boolean().optional(),
-      }),
-    )
-    .optional(),
+  categoryId: z.number().int(),
+  brandId: z.number().int(),
+  newImages: z.array(z.instanceof(File)),
+  images: z.array(
+    z.object({
+      id: z.number().int(),
+      path: z.string(),
+      deleted: z.boolean().optional(),
+    }),
+  ),
 });
 export type ProductForm = z.infer<typeof ProductFormSchema>;

@@ -1,45 +1,46 @@
-import { flexRender, Table } from '@tanstack/react-table';
-import { Table as TableUi, TableBody as TableBodyUi, TableCell, TableHeader, TableRow } from '@/components/ui/table';
-import { Fragment } from 'react';
+import { flexRender, Table as TableType } from '@tanstack/react-table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { columns } from '@/components/admin/dashboard/suppliers/Colums';
 
-interface TableBodyProps<T> {
-  table: Table<T>;
+interface TableMainProps<T> {
+  table: TableType<T>;
 }
 
-export default function TableBody<T>({ table }: TableBodyProps<T>) {
+export default function TableMain<T>({ table }: TableMainProps<T>) {
   return (
     <div className="hidden sm:block rounded-md border mt-2">
-      <TableUi>
+      <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <Fragment key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</Fragment>
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
                 );
               })}
             </TableRow>
           ))}
         </TableHeader>
-        <TableBodyUi>
-          {table.getRowModel().rows?.length ? (
+        <TableBody>
+          {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                 {row.getVisibleCells().map((cell) => (
-                  <Fragment key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Fragment>
+                  <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                 ))}
               </TableRow>
             ))
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                Sin resultados.
+                Sin resultados
               </TableCell>
             </TableRow>
           )}
-        </TableBodyUi>
-      </TableUi>
+        </TableBody>
+      </Table>
     </div>
   );
 }

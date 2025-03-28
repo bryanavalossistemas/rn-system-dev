@@ -21,7 +21,7 @@ export default function CreateButton() {
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Nueva Categoría</DrawerTitle>
-            <DrawerDescription>Rellene el formulario para crear una categoria.</DrawerDescription>
+            <DrawerDescription>Rellene el formulario para crear una categoria</DrawerDescription>
           </DrawerHeader>
           <CreateForm setOpen={setOpenDrawer} />
         </DrawerContent>
@@ -30,15 +30,15 @@ export default function CreateButton() {
       {/* DESKTOP */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
-          <Button className="hidden sm:inline-flex w-44">
+          <Button className="hidden sm:flex">
             <span>Añadir Categoría</span>
             <PlusIcon strokeWidth={3} />
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-sm">
           <DialogHeader>
             <DialogTitle>Nueva Categoría</DialogTitle>
-            <DialogDescription>Rellene el formulario para crear una categoria.</DialogDescription>
+            <DialogDescription>Rellene el formulario para crear una categoria</DialogDescription>
           </DialogHeader>
           <CreateForm setOpen={setOpenDialog} />
         </DialogContent>

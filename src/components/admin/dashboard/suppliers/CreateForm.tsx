@@ -2,13 +2,13 @@ import { create } from '@/api/suppliers';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Supplier, SupplierForm, SupplierFormSchema } from '@/schemas/suppliers';
-import useStore from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dispatch, SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import FormFields from './FormFields';
+import FormFields from '@/components/admin/dashboard/suppliers/FormFields';
+import { useSearchParams } from 'react-router';
 
 interface CreateFormProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -27,17 +27,17 @@ export default function CreateForm({ setOpen }: CreateFormProps) {
     },
   });
 
+  const [searchParams] = useSearchParams();
+  const date = searchParams.get('date');
   const queryClient = useQueryClient();
-
-  const { dateOptionSuppliers: dateOption } = useStore();
 
   const { mutate, isPending } = useMutation({
     mutationFn: create,
     onMutate: async ({ formData }) => {
       const { name, type, document, address, phone, email } = formData;
-      await queryClient.cancelQueries({ queryKey: ['suppliers', dateOption] });
+      await queryClient.cancelQueries({ queryKey: date === null ? ['suppliers'] : ['suppliers', date] });
 
-      const previousItems = queryClient.getQueryData(['suppliers', dateOption]);
+      const previousItems = queryClient.getQueryData(date === null ? ['suppliers'] : ['suppliers', date]);
 
       const item: Omit<Supplier, 'status' | 'createdAt'> & {
         isOptimistic?: boolean;
@@ -52,7 +52,7 @@ export default function CreateForm({ setOpen }: CreateFormProps) {
         isOptimistic: true,
       };
 
-      queryClient.setQueryData(['suppliers', dateOption], (oldItems: Supplier[]) => {
+      queryClient.setQueryData(date === null ? ['suppliers'] : ['suppliers', date], (oldItems: (Supplier & { isOptimistic?: boolean })[]) => {
         return [item, ...oldItems];
       });
 
@@ -63,10 +63,10 @@ export default function CreateForm({ setOpen }: CreateFormProps) {
     },
     onError: (error, _variables, context) => {
       toast.error(error.message);
-      queryClient.setQueryData(['suppliers', dateOption], context?.previousItems);
+      queryClient.setQueryData(date === null ? ['suppliers'] : ['suppliers', date], context?.previousItems);
     },
     onSuccess: (newItem) => {
-      queryClient.setQueryData(['suppliers', dateOption], (oldItems: Supplier & { isOptimistic?: boolean }[]) => {
+      queryClient.setQueryData(date === null ? ['suppliers'] : ['suppliers', date], (oldItems: (Supplier & { isOptimistic?: boolean })[]) => {
         return oldItems.map((item) => (item.isOptimistic ? newItem : item));
       });
     },

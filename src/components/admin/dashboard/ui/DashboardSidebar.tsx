@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Boxes, MonitorCog, ShoppingCartIcon, Store } from 'lucide-react';
-import { NavMain } from '@/components/admin/dashboard/NavMain';
-import { NavUser } from '@/components/admin/dashboard/NavUser';
-import { TeamSwitcher } from '@/components/admin/dashboard/TeamSwitcher';
+import { Boxes, MonitorCog, PiggyBankIcon, ShoppingCartIcon, Store } from 'lucide-react';
+import { NavMain } from '@/components/admin/dashboard/ui/NavMain';
+import { NavUser } from '@/components/admin/dashboard/ui/NavUser';
+import { TeamSwitcher } from '@/components/admin/dashboard/ui/TeamSwitcher';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/components/ui/sidebar';
 import { useLocation } from 'react-router';
 
@@ -59,14 +59,33 @@ export default function DashboardSidebar({ ...props }: React.ComponentProps<type
         isActive: pathname.includes('/admin/dashboard/purchases'),
         items: [
           {
-            title: 'Documentos',
-            url: '/admin/dashboard/purchases/documents',
-            isActive: pathname === '/admin/dashboard/purchases/documents',
+            title: 'Compras',
+            url: '/admin/dashboard/purchases/purchases',
+            isActive: pathname === '/admin/dashboard/purchases/purchases',
           },
           {
             title: 'Proveedores',
             url: '/admin/dashboard/purchases/suppliers',
             isActive: pathname === '/admin/dashboard/purchases/suppliers',
+          },
+        ],
+      },
+
+      // VENTAS
+      {
+        title: 'Ventas',
+        icon: PiggyBankIcon,
+        isActive: pathname.includes('/admin/dashboard/sales'),
+        items: [
+          {
+            title: 'Punto de Venta',
+            url: '/admin/dashboard/sales/pos',
+            isActive: pathname === '/admin/dashboard/sales/pos',
+          },
+          {
+            title: 'Clientes',
+            url: '/admin/dashboard/sales/customers',
+            isActive: pathname === '/admin/dashboard/sales/customers',
           },
         ],
       },

@@ -5,10 +5,9 @@ import { useState } from 'react';
 import UpdateForm from '@/components/admin/dashboard/products/UpdateForm';
 import { Product } from '@/schemas/products';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { findAll as findAllCategories } from '@/api/categories';
-import { findAll as findAllBrands } from '@/api/brands';
-import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCategories } from '@/hooks/useCategories';
+import { useBrands } from '@/hooks/useBrands';
 
 interface UpdateButtonProps {
   item: Product;
@@ -18,31 +17,9 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const {
-    data: categories = [],
-    isError: isErrorCategories,
-    isLoading: isLoadingCategories,
-    error: errorCategories,
-  } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => findAllCategories({}),
-    meta: {
-      persist: true,
-    },
-  });
+  const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
 
-  const {
-    data: brands = [],
-    isError: isErrorBrands,
-    isLoading: isLoadingBrands,
-    error: errorBrands,
-  } = useQuery({
-    queryKey: ['brands'],
-    queryFn: () => findAllBrands({}),
-    meta: {
-      persist: true,
-    },
-  });
+  const { data: brands = [], isLoading: isLoadingBrands } = useBrands();
 
   if (isLoadingCategories || isLoadingBrands) {
     return (
@@ -50,14 +27,6 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
         <Skeleton className="w-9 h-9 sm:hidden" />
         <Skeleton className="w-[86.83px] h-9 hidden sm:block" />
       </>
-    );
-  }
-
-  if (isErrorCategories || isErrorBrands) {
-    return (
-      <div>
-        Error: {errorCategories?.message} {errorBrands?.message}
-      </div>
     );
   }
 
@@ -85,7 +54,7 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
             <PencilIcon />
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-md max-h-[95svh] overflow-auto">
           <DialogHeader>
             <DialogTitle>Editar producto</DialogTitle>
             <DialogDescription>Actualiza el formulario para editar el producto</DialogDescription>

@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Dispatch, SetStateAction } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { Product } from '@/schemas/products';
-import FormFields from './FormFields';
+import FormFields from '@/components/admin/dashboard/purchases/details/FormFields';
 
 interface CreateFormProps {
   purchaseForm: UseFormReturn<PurchaseForm>;
@@ -17,32 +17,36 @@ export default function CreateForm({ purchaseForm, setOpen, products }: CreateFo
   const form = useForm<DetailForm>({
     resolver: zodResolver(DetailFormSchema),
     defaultValues: {
-      productId: '',
+      productId: 0,
       productName: '',
-      quantity: '',
-      unitPrice: '',
+      quantity: 0,
+      unitPrice: 0,
     },
   });
 
   const onSubmit = (formData: DetailForm) => {
-    const details = purchaseForm.getValues('documentDetails');
-    details.push({
-      key: Date.now(),
-      productId: formData.productId,
-      productName: formData.productName,
-      quantity: formData.quantity,
-      unitPrice: formData.unitPrice,
-    });
-    purchaseForm.setValue('documentDetails', details);
+    const oldDetails = purchaseForm.getValues('documentDetails');
+    purchaseForm.setValue('documentDetails', [
+      {
+        id: Date.now(),
+        product: products.find((p) => p.id === formData.productId)!,
+        productName: formData.productName,
+        quantity: formData.quantity,
+        unitPrice: formData.unitPrice,
+        createdAt: new Date(),
+        created: true,
+      },
+      ...oldDetails,
+    ]);
     setOpen(false);
   };
 
   return (
     <Form {...form}>
-      <form className="grid-rows-1 p-2">
+      <form className="flex flex-col p-2">
         <FormFields form={form} products={products} />
         <div className="flex flex-col sm:flex-row-reverse gap-2 mt-2 sm:mt-4">
-          <Button type="button" onClick={form.handleSubmit(onSubmit)}>
+          <Button type="submit" onClick={form.handleSubmit(onSubmit)}>
             Guardar
           </Button>
           <Button onClick={() => setOpen(false)} type="button" variant="outline">

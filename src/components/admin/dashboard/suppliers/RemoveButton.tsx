@@ -16,27 +16,28 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { TrashIcon } from 'lucide-react';
-import useStore from '@/store';
+import { useSearchParams } from 'react-router';
 
 interface RemoveButtonProps {
   id: Supplier['id'];
 }
 
 export default function RemoveButton({ id }: RemoveButtonProps) {
-  const queryClient = useQueryClient();
-
   const [open, setOpen] = useState(false);
-
-  const { dateOptionSuppliers: dateOption } = useStore();
+  const [searchParams] = useSearchParams();
+  const date = searchParams.get('date');
+  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
     mutationFn: remove,
     onMutate: async ({ id }) => {
-      await queryClient.cancelQueries({ queryKey: ['suppliers', dateOption] });
+      await queryClient.cancelQueries({ queryKey: date === null ? ['suppliers'] : ['suppliers', date] });
 
-      const previousItems = queryClient.getQueryData(['suppliers', dateOption]);
+      const previousItems = queryClient.getQueryData(date === null ? ['suppliers'] : ['suppliers', date]);
 
-      queryClient.setQueryData(['suppliers', dateOption], (oldItems: Supplier[]) => oldItems.filter((item) => item.id !== id));
+      queryClient.setQueryData(date === null ? ['suppliers'] : ['suppliers', date], (oldItems: Supplier[]) =>
+        oldItems.filter((item) => item.id !== id),
+      );
 
       setOpen(false);
       toast.success('Proveedor eliminado correctamente');
@@ -45,7 +46,7 @@ export default function RemoveButton({ id }: RemoveButtonProps) {
     },
     onError: (error, _variables, context) => {
       toast.error(error.message);
-      queryClient.setQueryData(['suppliers', dateOption], context?.previousItems);
+      queryClient.setQueryData(date === null ? ['suppliers'] : ['suppliers', date], context?.previousItems);
     },
   });
 
@@ -66,11 +67,11 @@ export default function RemoveButton({ id }: RemoveButtonProps) {
           </Button>
         </div>
       </AlertDialogTrigger>
-      <AlertDialogContent className="max-w-[calc(100%-1.5rem)] p-2 sm:p-4">
+      <AlertDialogContent className="max-w-[calc(100%-1.5rem)] p-2 sm:p-4 sm:w-md">
         <AlertDialogHeader>
           <AlertDialogTitle>¿Estás completamente seguro?</AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no se puede deshacer. Borrará permanentemente el proveedor y eliminará sus datos de nuestros servidores.
+            Esta acción no se puede deshacer. Borrará permanentemente el proveedor y eliminará sus datos de nuestros servidores
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
