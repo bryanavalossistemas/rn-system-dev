@@ -1,7 +1,7 @@
 import DashboardHeader from '@/components/admin/dashboard/ui/DashboardHeader';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { SaleForm, SaleFormSchema } from '@/schemas/sales';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import LeftPanelProducts from '@/components/admin/dashboard/pos/LeftPanelProducts';
 import RightPanelCart from '@/components/admin/dashboard/pos/RightPanelCart';
@@ -22,8 +22,6 @@ export default function POSView() {
     },
   });
 
-  const documentDetails = useWatch({ control: form.control, name: 'documentDetails' });
-
   return (
     <>
       <SidebarInset className="max-h-svh h-svh">
@@ -35,7 +33,7 @@ export default function POSView() {
             <LeftPanelProducts />
 
             {/* Right Panel - Cart */}
-            <RightPanelCart form={form} documentDetails={documentDetails} />
+            <RightPanelCart />
           </div>
         </FormProvider>
       </SidebarInset>
