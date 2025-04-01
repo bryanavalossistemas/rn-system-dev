@@ -16,9 +16,9 @@ export default function POSView() {
   const form = useForm<SaleForm>({
     resolver: zodResolver(SaleFormSchema),
     defaultValues: {
-      documentTypeId: 1,
+      documentType: 'Factura',
       customerId: 0,
-      documentDetails: [],
+      saleDetails: [],
     },
   });
 

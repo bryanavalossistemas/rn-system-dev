@@ -37,8 +37,8 @@ export default function CartItemProductName({ id, productName }: CartItemProduct
   const handleSave = () => {
     const newValue = editRef.current?.innerText.trim() || '';
     setValue(
-      'documentDetails',
-      getValues('documentDetails').map((d) => (d.id === id ? { ...d, productName: newValue } : d)),
+      'saleDetails',
+      getValues('saleDetails').map((d) => (d.id === id ? { ...d, productName: newValue } : d)),
     );
     // updateProductName(id, newValue);
     setIsEditing(false);

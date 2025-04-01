@@ -1,47 +1,48 @@
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { Detail, DetailForm, DetailFormSchema, PurchaseForm } from '@/schemas/purchases';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dispatch, SetStateAction } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { Product } from '@/schemas/products';
 import FormFields from '@/components/admin/dashboard/purchases/details/FormFields';
+import { PurchaseDetailForm, PurchaseDetailFormSchema, PurchaseForm } from '@/schemas/purchases';
 
 interface UpdateFormProps {
   purchaseForm: UseFormReturn<PurchaseForm>;
   setOpen: Dispatch<SetStateAction<boolean>>;
   products: Product[];
-  item: Detail;
+  item: PurchaseDetailForm;
 }
 
 export default function UpdateForm({ purchaseForm, setOpen, products, item }: UpdateFormProps) {
-  const { id, product, productName, quantity, unitPrice, createdAt, created } = item;
-  const form = useForm<DetailForm>({
-    resolver: zodResolver(DetailFormSchema),
+  const { id, productName, quantity, unitPrice, created, productId } = item;
+  const form = useForm<PurchaseDetailForm>({
+    resolver: zodResolver(PurchaseDetailFormSchema),
     defaultValues: {
-      productId: product.id,
+      id: id,
+      productId: productId,
       productName: productName,
       quantity: quantity,
       unitPrice: unitPrice,
+      created: created,
     },
   });
 
-  const onSubmit = (formData: DetailForm) => {
-    const details = purchaseForm.getValues('documentDetails');
+  const onSubmit = (formData: PurchaseDetailForm) => {
+    const details = purchaseForm.getValues('purchaseDetails');
     const newDetails = details.map((d) =>
       d.id === id
         ? {
-            id: id,
-            product: products.find((p) => p.id === formData.productId)!,
+            id: formData.id,
+            productId: d.productId,
             productName: formData.productName,
             quantity: formData.quantity,
             unitPrice: formData.unitPrice,
-            createdAt: createdAt,
-            created: created,
+            created: formData.created,
           }
         : d,
     );
-    purchaseForm.setValue('documentDetails', newDetails);
+    purchaseForm.setValue('purchaseDetails', newDetails);
     setOpen(false);
   };
 

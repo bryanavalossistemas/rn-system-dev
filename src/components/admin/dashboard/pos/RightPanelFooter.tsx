@@ -1,25 +1,25 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
-import SalePDF from '@/components/admin/dashboard/pos/SalePDF';
 import { SaleForm } from '@/schemas/sales';
 import { useFormContext } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { create } from '@/api/sales';
 import { toast } from 'sonner';
 import { Customer } from '@/schemas/customers';
+import SalePDF from '@/components/admin/dashboard/pos/SalePDF';
 
 interface RightPanelFooterProps {
   customers: Customer[];
-  documentDetails: SaleForm['documentDetails'];
+  saleDetails: SaleForm['saleDetails'];
 }
 
-export default function RightPanelFooter({ customers, documentDetails }: RightPanelFooterProps) {
+export default function RightPanelFooter({ customers, saleDetails }: RightPanelFooterProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const { handleSubmit, getValues } = useFormContext<SaleForm>();
 
   const { total, subtotal, tax } = useMemo(() => {
-    const total = documentDetails.reduce((sum, item) => sum + (item.unitPrice || 0) * (item.quantity || 0), 0);
+    const total = saleDetails.reduce((sum, item) => sum + (item.unitPrice || 0) * (item.quantity || 0), 0);
     const subtotal = total / 1.18;
     const tax = subtotal * 0.18;
 
@@ -28,16 +28,18 @@ export default function RightPanelFooter({ customers, documentDetails }: RightPa
       subtotal: parseFloat(subtotal.toFixed(2)),
       tax: parseFloat(tax.toFixed(2)),
     };
-  }, [documentDetails]);
+  }, [saleDetails]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: create,
     onError: (error) => {
       toast.error(error.message);
     },
+    onMutate: () => {
+      setOpenDialog(true);
+    },
     onSuccess: () => {
       toast.success('Venta creada correctamente');
-      setOpenDialog(true);
     },
   });
 
@@ -63,12 +65,12 @@ export default function RightPanelFooter({ customers, documentDetails }: RightPa
         type="button"
         onClick={handleSubmit(onSubmit)}
         className="w-full h-14 text-lg cursor-pointer"
-        disabled={documentDetails.length === 0 || isPending}
+        disabled={saleDetails.length === 0 || isPending}
       >
         Guardar
       </Button>
       <SalePDF
-        documentDetails={documentDetails}
+        saleDetails={saleDetails}
         customer={customers.find((c) => c.id === getValues('customerId'))}
         total={total}
         subtotal={subtotal}

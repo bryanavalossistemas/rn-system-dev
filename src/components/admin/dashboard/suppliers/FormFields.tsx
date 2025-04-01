@@ -18,7 +18,7 @@ export default function FormFields({ form }: FormFieldsProps) {
     }
   }, []);
 
-  const currentType = useWatch({ control: form.control, name: 'type' });
+  const currentDocumentType = useWatch({ control: form.control, name: 'documentType' });
 
   return (
     <div className="grid gap-6">
@@ -31,7 +31,7 @@ export default function FormFields({ form }: FormFieldsProps) {
             <FormLabel>Nombre</FormLabel>
             <FormControl>
               <Input
-                placeholder={currentType === 'RUC' ? 'Representaciones Nataly S.A.C' : 'Alicia Loa y Pardo Menacho'}
+                placeholder={currentDocumentType === 'RUC' ? 'Representaciones Nataly S.A.C' : 'Alicia Loa y Pardo Menacho'}
                 type="text"
                 autoComplete="on"
                 autoFocus
@@ -47,7 +47,7 @@ export default function FormFields({ form }: FormFieldsProps) {
       {/* TIPO */}
       <FormField
         control={form.control}
-        name="type"
+        name="documentType"
         render={({ field }) => (
           <FormItem>
             <FormLabel>RUC | DNI</FormLabel>
@@ -70,12 +70,12 @@ export default function FormFields({ form }: FormFieldsProps) {
       {/* DOCUMENTO */}
       <FormField
         control={form.control}
-        name="document"
+        name="documentNumber"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Número de {currentType}</FormLabel>
+            <FormLabel>Número de {currentDocumentType}</FormLabel>
             <FormControl>
-              <Input placeholder={currentType === 'RUC' ? '20600007522' : '75013015'} type="number" autoComplete="on" {...field} />
+              <Input placeholder={currentDocumentType === 'RUC' ? '20600007522' : '75013015'} type="number" autoComplete="on" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>

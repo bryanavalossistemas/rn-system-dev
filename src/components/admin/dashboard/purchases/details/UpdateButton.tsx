@@ -5,13 +5,13 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UseFormReturn } from 'react-hook-form';
-import { Detail, PurchaseForm } from '@/schemas/purchases';
+import { PurchaseDetailForm, PurchaseForm } from '@/schemas/purchases';
 import UpdateForm from '@/components/admin/dashboard/purchases/details/UpdateForm';
 import { useProducts } from '@/hooks/useProducts';
 
 interface UpdateButtonProps {
   purchaseForm: UseFormReturn<PurchaseForm>;
-  item: Detail;
+  item: PurchaseDetailForm;
 }
 
 export default function UpdateButton({ purchaseForm, item }: UpdateButtonProps) {

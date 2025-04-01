@@ -22,16 +22,16 @@ interface FormFieldsProps {
 export default function FormFields({ form, suppliers }: FormFieldsProps) {
   const [openSuppliersDrawer, setOpenSuppliersDrawer] = useState(false);
   const [openSuppliersPopover, setOpenSuppliersPopover] = useState(false);
-  const currentDocumentTypeId = useWatch({ control: form.control, name: 'documentTypeId' });
+  const currentDocumentType = useWatch({ control: form.control, name: 'documentType' });
 
   const filteredSuppliers = useMemo(() => {
-    if (currentDocumentTypeId === 1) {
-      return suppliers.filter((c) => c.type === 'RUC');
-    } else if (currentDocumentTypeId === 2) {
-      return suppliers.filter((c) => c.type === 'DNI');
+    if (currentDocumentType === 'Factura') {
+      return suppliers.filter((c) => c.documentType === 'RUC');
+    } else if (currentDocumentType === 'Boleta') {
+      return suppliers.filter((c) => c.documentType === 'DNI');
     }
     return suppliers;
-  }, [suppliers, currentDocumentTypeId]);
+  }, [suppliers, currentDocumentType]);
 
   return (
     <>
@@ -40,16 +40,16 @@ export default function FormFields({ form, suppliers }: FormFieldsProps) {
           {/* DOCUMENT TYPE */}
           <FormField
             control={form.control}
-            name="documentTypeId"
+            name="documentType"
             render={({ field }) => (
               <FormItem>
                 <Select
-                  name="documentTypeId"
+                  name="documentType"
                   onValueChange={(value) => {
-                    field.onChange(parseInt(value));
+                    field.onChange(value);
                     form.setValue('supplierId', 0);
                   }}
-                  defaultValue={String(field.value)}
+                  defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger className="w-[100px]">
@@ -57,8 +57,8 @@ export default function FormFields({ form, suppliers }: FormFieldsProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent className="min-w-auto w-[100px]">
-                    <SelectItem value={'1'}>Factura</SelectItem>
-                    <SelectItem value={'2'}>Boleta</SelectItem>
+                    <SelectItem value={'Factura'}>Factura</SelectItem>
+                    <SelectItem value={'Boleta'}>Boleta</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -168,7 +168,7 @@ export default function FormFields({ form, suppliers }: FormFieldsProps) {
       <div className="flex-1 mt-4">
         <FormField
           control={form.control}
-          name="documentDetails"
+          name="purchaseDetails"
           render={({ field }) => (
             <FormItem>
               <Table>
@@ -194,12 +194,12 @@ export default function FormFields({ form, suppliers }: FormFieldsProps) {
                               onClick={() => {
                                 if (detail.created) {
                                   form.setValue(
-                                    'documentDetails',
+                                    'purchaseDetails',
                                     field.value.filter((p) => p.id !== detail.id),
                                   );
                                 } else {
                                   form.setValue(
-                                    'documentDetails',
+                                    'purchaseDetails',
                                     field.value.map((p) => (p.id === detail.id ? { ...p, deleted: true } : p)),
                                   );
                                 }

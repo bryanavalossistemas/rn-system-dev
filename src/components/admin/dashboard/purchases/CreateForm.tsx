@@ -20,9 +20,9 @@ export default function CreateForm({ setOpen, suppliers }: CreateFormProps) {
   const form = useForm<PurchaseForm>({
     resolver: zodResolver(PurchaseFormSchema),
     defaultValues: {
-      documentTypeId: 1,
+      documentType: 'Factura',
       supplierId: 0,
-      documentDetails: [],
+      purchaseDetails: [],
     },
   });
 
@@ -33,34 +33,39 @@ export default function CreateForm({ setOpen, suppliers }: CreateFormProps) {
   const { mutate, isPending } = useMutation({
     mutationFn: create,
     onMutate: async ({ formData }) => {
-      const { supplierId, documentTypeId, documentDetails } = formData;
+      const { supplierId, documentType, purchaseDetails } = formData;
       await queryClient.cancelQueries({ queryKey: date === null ? ['purchases'] : ['purchases', date] });
 
       const previousItems = queryClient.getQueryData(date === null ? ['purchases'] : ['purchases', date]);
+
+      const total = purchaseDetails.reduce((total, d) => total + d.unitPrice * d.quantity, 0);
+      const subtotal = total / 1.18;
+      const tax = subtotal * 0.18;
 
       const item: Purchase & {
         isOptimistic?: boolean;
       } = {
         id: Date.now(),
+        documentType: documentType,
         supplierName: suppliers.find((s) => s.id === supplierId)?.name ?? '',
-        supplierDocument: suppliers.find((s) => s.id === supplierId)?.document ?? '',
+        supplierDocumentNumber: suppliers.find((s) => s.id === supplierId)?.documentNumber ?? '',
         supplier: suppliers.find((s) => s.id === supplierId),
-        document: {
-          total: documentDetails.reduce((total, d) => total + d.unitPrice * d.quantity, 0),
-          documentType: { id: documentTypeId },
-          documentDetails: documentDetails.map((d) => {
-            return {
-              id: d.id,
-              productName: d.productName,
-              quantity: d.quantity,
-              unitPrice: d.unitPrice,
-              product: d.product,
-              createdAt: d.createdAt,
-              created: d.created,
-              deleted: d.deleted,
-            };
-          }),
-        },
+        purchaseDetails: purchaseDetails.map((d) => {
+          return {
+            id: d.id,
+            productName: d.productName,
+            quantity: d.quantity,
+            unitPrice: d.unitPrice,
+            productId: d.productId,
+            createdAt: new Date(),
+            purchaseId: Date.now(),
+          };
+        }),
+        total: total,
+        subtotal: subtotal,
+        tax: tax,
+        supplierId: supplierId,
+        documentNumber: documentType === 'Factura' ? 'F001 - ' : 'B001 - ',
         createdAt: new Date(),
         isOptimistic: true,
       };
@@ -69,7 +74,7 @@ export default function CreateForm({ setOpen, suppliers }: CreateFormProps) {
         return [item, ...oldItems];
       });
 
-      toast.success('Proveedor creado correctamente');
+      toast.success('Compra creada correctamente');
       setOpen(false);
 
       return { previousItems };

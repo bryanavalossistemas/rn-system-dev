@@ -18,24 +18,20 @@ interface UpdateFormProps {
 }
 
 export default function UpdateForm({ setOpen, item, suppliers }: UpdateFormProps) {
-  const { id, document, supplier, createdAt } = item;
+  const { id, createdAt, documentType, supplierId, purchaseDetails, documentNumber } = item;
 
   const form = useForm<PurchaseForm>({
     resolver: zodResolver(PurchaseFormSchema),
     defaultValues: {
-      documentTypeId: document?.documentType?.id,
-      supplierId: supplier?.id,
-      documentDetails: document?.documentDetails?.map((d) => {
+      documentType: documentType,
+      supplierId: supplierId,
+      purchaseDetails: purchaseDetails?.map((d) => {
         return {
           id: d.id,
-          productId: d.product.id,
+          productId: d.productId,
           productName: d.productName,
           quantity: d.quantity,
           unitPrice: d.unitPrice,
-          product: d.product,
-          createdAt: d.createdAt,
-          created: d.created,
-          deleted: d.deleted,
         };
       }),
     },
@@ -52,33 +48,36 @@ export default function UpdateForm({ setOpen, item, suppliers }: UpdateFormProps
 
       const previousItems = queryClient.getQueryData(date === null ? ['purchases'] : ['purchases', date]);
 
-      const { documentTypeId, supplierId, documentDetails } = formData;
+      const { documentType, supplierId, purchaseDetails } = formData;
+
+      const total = purchaseDetails.reduce((total, d) => total + d.unitPrice * d.quantity, 0);
+      const subtotal = total / 1.18;
+      const tax = subtotal * 0.18;
 
       const updatedItem: Purchase & {
         isOptimistic?: boolean;
       } = {
         id: id,
         supplierName: suppliers.find((s) => s.id === supplierId)?.name ?? '',
-        supplierDocument: suppliers.find((s) => s.id === supplierId)?.document ?? '',
+        supplierDocumentNumber: suppliers.find((s) => s.id === supplierId)?.documentNumber ?? '',
         supplier: suppliers.find((s) => s.id === supplierId),
-        document: {
-          documentSerie: document?.documentSerie,
-          documentNumber: document?.documentNumber,
-          total: documentDetails.filter((d) => d.deleted !== true).reduce((total, d) => total + d.unitPrice * d.quantity, 0),
-          documentType: { id: documentTypeId },
-          documentDetails: documentDetails.map((d) => {
-            return {
-              id: d.id,
-              productName: d.productName,
-              quantity: d.quantity,
-              unitPrice: d.unitPrice,
-              product: d.product,
-              createdAt: d.createdAt,
-              created: d.created,
-              deleted: d.deleted,
-            };
-          }),
-        },
+        total: total,
+        subtotal: subtotal,
+        tax: tax,
+        documentType: documentType,
+        documentNumber: documentNumber,
+        supplierId: supplierId,
+        purchaseDetails: purchaseDetails.map((d) => {
+          return {
+            id: d.id,
+            purchaseId: id,
+            productId: d.productId,
+            productName: d.productName,
+            quantity: d.quantity,
+            unitPrice: d.unitPrice,
+            createdAt: new Date(),
+          };
+        }),
         createdAt: createdAt,
         isOptimistic: true,
       };

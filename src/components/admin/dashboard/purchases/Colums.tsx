@@ -22,14 +22,14 @@ export const columns = [
     enableHiding: false,
   }),
 
-  columnHelper.accessor('document.documentNumber', {
+  columnHelper.accessor('documentNumber', {
     header: ({ column }) => (
       <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
         <span>N° Documento</span>
         <ArrowUpDownIcon className="size-4" />
       </div>
     ),
-    cell: (info) => `${info.row.original.document?.documentSerie} - ${info.row.original.document?.documentNumber ?? ''}`,
+    cell: (info) => info.getValue(),
   }),
 
   columnHelper.accessor('createdAt', {
@@ -52,7 +52,7 @@ export const columns = [
     cell: (info) => <div className="whitespace-normal">{info.getValue()}</div>,
   }),
 
-  columnHelper.accessor('document.total', {
+  columnHelper.accessor('total', {
     header: ({ column }) => (
       <div className="flex justify-end">
         <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
@@ -61,7 +61,7 @@ export const columns = [
         </div>
       </div>
     ),
-    cell: (info) => <div className="flex justify-end">{formatCurrency(info.getValue() ?? 0)}</div>,
+    cell: (info) => <div className="flex justify-end">{formatCurrency(info.getValue())}</div>,
   }),
 
   columnHelper.display({

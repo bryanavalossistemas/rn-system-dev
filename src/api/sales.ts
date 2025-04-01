@@ -4,14 +4,15 @@ import { SaleForm, SaleSchema } from '@/schemas/sales';
 import { isAxiosError } from 'axios';
 
 export const create = async ({ formData: data }: { formData: SaleForm }) => {
-  const { documentTypeId, customerId, documentDetails } = data;
+  const { documentType, customerId, saleDetails } = data;
 
   const formData = {
-    documentTypeId: documentTypeId,
+    documentType: documentType,
     customerId: customerId,
-    documentDetails: documentDetails.map((d) => {
+    saleDetails: saleDetails.map((d) => {
       return {
-        productId: d.product.id,
+        productId: d.productId,
+        productName: d.productName,
         quantity: d.quantity,
         unitPrice: d.unitPrice,
       };

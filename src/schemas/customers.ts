@@ -3,8 +3,8 @@ import { z } from 'zod';
 export const CustomerSchema = z.object({
   id: z.number().int(),
   name: z.string(),
-  type: z.enum(['RUC', 'DNI']),
-  document: z.string(),
+  documentType: z.enum(['RUC', 'DNI']),
+  documentNumber: z.string(),
   address: z.string().nullable(),
   phone: z.string().nullable(),
   email: z.string().nullable(),
@@ -16,8 +16,8 @@ export const CustomersSchema = z.array(CustomerSchema);
 export const CustomerFormSchema = z
   .object({
     name: z.string().min(1, { message: 'El nombre es obligatorio' }),
-    type: z.enum(['RUC', 'DNI']),
-    document: z.string(),
+    documentType: z.enum(['RUC', 'DNI']),
+    documentNumber: z.string(),
     address: z.string(),
     phone: z
       .string()
@@ -26,21 +26,21 @@ export const CustomerFormSchema = z
     email: z.string().email({ message: 'Correo no válido' }).or(z.literal('')),
   })
   .superRefine((value, ctx) => {
-    const { type, document } = value;
+    const { documentType, documentNumber } = value;
 
-    if (type === 'RUC' && document.length !== 11) {
+    if (documentType === 'RUC' && documentNumber.length !== 11) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'El RUC debe tener 11 dígitos',
-        path: ['document'],
+        path: ['documentNumber'],
       });
     }
 
-    if (type === 'DNI' && document.length !== 8) {
+    if (documentType === 'DNI' && documentNumber.length !== 8) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'El DNI debe tener 8 dígitos',
-        path: ['document'],
+        path: ['documentNumber'],
       });
     }
   });

@@ -16,14 +16,14 @@ interface UpdateFormProps {
 }
 
 export default function UpdateForm({ setOpen, item }: UpdateFormProps) {
-  const { id, name, type, document, address, phone, email } = item;
+  const { id, name, documentType, documentNumber, address, phone, email } = item;
 
   const form = useForm<CustomerForm>({
     resolver: zodResolver(CustomerFormSchema),
     defaultValues: {
       name: name,
-      type: type,
-      document: document,
+      documentType: documentType,
+      documentNumber: documentNumber,
       address: address ?? '',
       phone: phone ?? '',
       email: email ?? '',
@@ -41,15 +41,15 @@ export default function UpdateForm({ setOpen, item }: UpdateFormProps) {
 
       const previousItems = queryClient.getQueryData(date === null ? ['customers'] : ['customers', date]);
 
-      const { name, type, document, address, phone, email } = formData;
+      const { name, documentType, documentNumber, address, phone, email } = formData;
 
       const updatedItem: Omit<Customer, 'createdAt'> & {
         isOptimistic?: boolean;
       } = {
         id: id,
         name: name,
-        type: type,
-        document: document,
+        documentType: documentType,
+        documentNumber: documentNumber,
         address: address || null,
         phone: phone || null,
         email: email || null,

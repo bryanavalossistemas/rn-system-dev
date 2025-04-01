@@ -318,7 +318,11 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
                 (image, index) =>
                   !image.deleted && (
                     <div key={image.id} className="grid">
-                      <img src={image.path} alt={`Vista previa ${index + 1}`} className="w-28 h-28 object-cover rounded-t-sm" />
+                      <img
+                        src={`${import.meta.env.VITE_API_URL}/${image.path}`}
+                        alt={`Vista previa ${index + 1}`}
+                        className="w-28 h-28 object-cover rounded-t-sm"
+                      />
                       <Button type="button" onClick={() => handleProductImageChange(image.id)} className="rounded-t-none">
                         Eliminar
                       </Button>

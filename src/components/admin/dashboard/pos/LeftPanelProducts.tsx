@@ -44,21 +44,21 @@ export default function LeftPanelProducts() {
               key={product.id}
               className="cursor-pointer hover:shadow-md transition-shadow p-0 overflow-hidden gap-0"
               onClick={() => {
-                setValue('documentDetails', [
+                setValue('saleDetails', [
                   {
                     id: Date.now(),
-                    product: product,
-                    createdAt: new Date(),
+                    productId: product.id,
                     productName: product.name,
                     quantity: 1,
                     unitPrice: product.salePrice,
+                    images: product.images,
                   },
-                  ...getValues('documentDetails'),
+                  ...getValues('saleDetails'),
                 ]);
               }}
             >
               <img
-                src={product.images ? (product.images[0]?.path ?? '/placeholder.svg') : '/placeholder.svg'}
+                src={product.images && product.images.length > 0 ? `${import.meta.env.VITE_API_URL}/${product.images[0]?.path}` : '/placeholder.svg'}
                 alt={product.name}
                 className="object-cover h-50 w-full"
               />

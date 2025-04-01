@@ -31,7 +31,7 @@ export const columns = [
     cell: (info) => <div className="whitespace-normal">{info.getValue()}</div>,
   }),
 
-  columnHelper.accessor('type', {
+  columnHelper.accessor('documentType', {
     header: ({ column }) => (
       <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
         <span>RUC/DNI</span>
@@ -41,7 +41,7 @@ export const columns = [
     cell: (info) => info.getValue(),
   }),
 
-  columnHelper.accessor('document', {
+  columnHelper.accessor('documentNumber', {
     header: ({ column }) => (
       <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
         <span>N° Documento</span>

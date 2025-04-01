@@ -35,7 +35,7 @@ export default function CreateButton() {
             <PlusIcon strokeWidth={3} />
           </Button>
         </DialogTrigger>
-        <DialogContent className="w-md">
+        <DialogContent className="w-md max-h-[95svh] overflow-auto">
           <DialogHeader>
             <DialogTitle>Nuevo Proveedor</DialogTitle>
             <DialogDescription>Rellene el formulario para crear un proveedor</DialogDescription>

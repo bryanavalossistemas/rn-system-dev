@@ -4,15 +4,15 @@ export interface Columns {
 
 export const columns: Columns = {
   name: 'Nombre',
-  type: 'RUC/DNI',
-  document: 'N° Documento',
+  documentType: 'RUC/DNI',
+  documentNumber: 'N° Documento',
 };
 
 export const columnsToExport = [
   { header: 'Id', key: 'id' },
   { header: 'Nombre', key: 'name' },
-  { header: 'RUC/DNI', key: 'type' },
-  { header: 'N° Documento', key: 'document' },
+  { header: 'RUC/DNI', key: 'documentType' },
+  { header: 'N° Documento', key: 'documentNumber' },
 ];
 
 export const dateOptions = [

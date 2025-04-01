@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { DetailForm } from '@/schemas/purchases';
 import { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Product } from '@/schemas/products';
@@ -10,9 +9,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { PurchaseDetailForm } from '@/schemas/purchases';
 
 interface FormFieldsProps {
-  form: UseFormReturn<DetailForm>;
+  form: UseFormReturn<PurchaseDetailForm>;
   products: Product[];
 }
 

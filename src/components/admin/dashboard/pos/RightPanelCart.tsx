@@ -10,16 +10,16 @@ export default function RightPanelCart() {
 
   const { control } = useFormContext<SaleForm>();
 
-  const documentDetails = useWatch({ control: control, name: 'documentDetails' });
+  const saleDetails = useWatch({ control: control, name: 'saleDetails' });
 
   return (
     <div className="w-100 border-l flex flex-col">
       {/* Right Panel - Cart */}
       <RightPanelHeading customers={customers} />
 
-      <RightPanelBody documentDetails={documentDetails} />
+      <RightPanelBody saleDetails={saleDetails} />
 
-      <RightPanelFooter customers={customers} documentDetails={documentDetails} />
+      <RightPanelFooter customers={customers} saleDetails={saleDetails} />
     </div>
   );
 }

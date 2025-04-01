@@ -66,7 +66,7 @@ export function Table() {
                 </div>
                 <div className="text-gray-600 flex flex-col gap-0.5">
                   <div>Proveedor: {row.original.supplierName}</div>
-                  <div>N° Documento: {row.original.supplierDocument}</div>
+                  <div>N° Documento: {row.original.documentNumber}</div>
                 </div>
               </div>
               <div className="flex gap-2 justify-end">

@@ -29,6 +29,7 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
       categoryId: 0,
       brandId: 0,
       newImages: [],
+      images: [],
     },
   });
 

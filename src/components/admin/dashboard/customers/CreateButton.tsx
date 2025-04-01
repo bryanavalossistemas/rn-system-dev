@@ -35,12 +35,12 @@ export default function CreateButton({ className, variant }: CreateButtonProps) 
       {/* DESKTOP */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild>
-          <Button className={`hidden sm:inline-flex ${className}`} variant={variant ?? 'default'}>
+          <Button className={`hidden sm:flex ${className}`} variant={variant ?? 'default'}>
             <span>Añadir Cliente</span>
             <PlusIcon strokeWidth={3} />
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:w-md">
+        <DialogContent className="w-md max-h-[95svh] overflow-auto">
           <DialogHeader>
             <DialogTitle>Nuevo Cliente</DialogTitle>
             <DialogDescription>Rellene el formulario para crear un cliente</DialogDescription>

@@ -43,8 +43,8 @@ export default function CartItemUnitPrice({ id, unitPrice }: CartItemUnitPricePr
     numericValue = parseFloat(numericValue.toFixed(2));
 
     setValue(
-      'documentDetails',
-      getValues('documentDetails').map((d) => (d.id === id ? { ...d, unitPrice: numericValue } : d)),
+      'saleDetails',
+      getValues('saleDetails').map((d) => (d.id === id ? { ...d, unitPrice: numericValue } : d)),
     );
 
     setDisplayValue(numericValue.toFixed(2));

@@ -19,8 +19,8 @@ export default function CreateForm({ setOpen }: CreateFormProps) {
     resolver: zodResolver(SupplierFormSchema),
     defaultValues: {
       name: '',
-      type: 'RUC',
-      document: '',
+      documentType: 'RUC',
+      documentNumber: '',
       address: '',
       phone: '',
       email: '',
@@ -34,7 +34,7 @@ export default function CreateForm({ setOpen }: CreateFormProps) {
   const { mutate, isPending } = useMutation({
     mutationFn: create,
     onMutate: async ({ formData }) => {
-      const { name, type, document, address, phone, email } = formData;
+      const { name, documentType, documentNumber, address, phone, email } = formData;
       await queryClient.cancelQueries({ queryKey: date === null ? ['suppliers'] : ['suppliers', date] });
 
       const previousItems = queryClient.getQueryData(date === null ? ['suppliers'] : ['suppliers', date]);
@@ -44,8 +44,8 @@ export default function CreateForm({ setOpen }: CreateFormProps) {
       } = {
         id: Date.now(),
         name: name,
-        type: type,
-        document: document,
+        documentType: documentType,
+        documentNumber: documentNumber,
         address: address || null,
         phone: phone || null,
         email: email || null,

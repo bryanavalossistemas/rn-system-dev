@@ -65,8 +65,8 @@ export function Table() {
                   <span className="font-medium">{row.original.name}</span>
                 </div>
                 <div className="text-gray-600 flex flex-col gap-0.5">
-                  <div>Tipo: {row.original.type}</div>
-                  <div>Documento: {row.original.document}</div>
+                  <div>Tipo: {row.original.documentType}</div>
+                  <div>Documento: {row.original.documentNumber}</div>
                   <div>Dirección: {row.original.address}</div>
                   <div>Teléfono: {row.original.phone}</div>
                   <div>Correo: {row.original.email}</div>

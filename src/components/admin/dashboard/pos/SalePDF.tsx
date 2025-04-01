@@ -1,6 +1,5 @@
-// PDFExportButton.jsx
-import html2canvas from 'html2canvas-pro';
-import jsPDF from 'jspdf';
+import { toPng } from 'html-to-image';
+import { PDFDocument } from 'pdf-lib';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useRef } from 'react';
@@ -12,7 +11,7 @@ import { useFormContext } from 'react-hook-form';
 
 interface CreateButtonProps {
   customer?: Customer;
-  documentDetails: SaleForm['documentDetails'];
+  saleDetails: SaleForm['saleDetails'];
   total: number;
   subtotal: number;
   tax: number;
@@ -20,59 +19,91 @@ interface CreateButtonProps {
   setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SalePDF({ total, subtotal, tax, openDialog, setOpenDialog, documentDetails, customer }: CreateButtonProps) {
+export default function SalePDF({ total, subtotal, tax, openDialog, setOpenDialog, saleDetails, customer }: CreateButtonProps) {
   const pdfRef = useRef<HTMLDivElement>(null);
   const { reset } = useFormContext<SaleForm>();
 
-  const generatePDF = async (action = 'download') => {
+  const generatePDF = async (action: 'download' | 'print' = 'download') => {
     if (!pdfRef.current) return;
 
     try {
-      const canvas = await html2canvas(pdfRef.current, {
-        scale: 5, // Mejor calidad
-        logging: false,
-        useCORS: true,
-        allowTaint: true,
-        windowWidth: pdfRef.current.scrollWidth,
-        windowHeight: pdfRef.current.scrollHeight,
+      const startTime = performance.now();
+
+      // 1. Generar imagen PNG del HTML
+      const pngDataUrl = await toPng(pdfRef.current, {
+        quality: 0.9,
+        pixelRatio: 1.5,
+        skipFonts: true,
+        cacheBust: false,
+        skipAutoScale: true,
+        filter: (node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const elem = node as HTMLElement;
+            return !(elem.style.opacity === '0' || elem.style.visibility === 'hidden' || elem.style.display === 'none');
+          }
+          return true;
+        },
       });
 
-      const imgData = canvas.toDataURL('image/png', 1.0);
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 210; // Ancho A4
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      // 2. Crear PDF y procesar imagen en paralelo
+      const pdfDoc = await PDFDocument.create();
+      const pngImage = await pdfDoc.embedPng(pngDataUrl);
 
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      const page = pdfDoc.addPage([595, 842]);
+      const { width, height } = pngImage.scale(1);
+      const scale = Math.min(595 / width, 842 / height);
+
+      page.drawImage(pngImage, {
+        x: 0,
+        y: 842 - height * scale,
+        width: width * scale,
+        height: height * scale,
+      });
+
+      // 3. Guardar PDF con opciones de compresión
+      const pdfBytes = await pdfDoc.save({
+        useObjectStreams: true,
+        // Opción alternativa para compresión si 'compress' no funciona
+        // useCompression: true
+      });
+
+      // 4. Manejo de la descarga/impresión
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const pdfUrl = URL.createObjectURL(blob);
 
       if (action === 'download') {
-        pdf.save('factura.pdf');
-      } else if (action === 'print') {
-        // Crear una nueva ventana para imprimir
-        const pdfBlob = pdf.output('blob');
-        const pdfUrl = URL.createObjectURL(pdfBlob);
-        const printWindow = window.open(pdfUrl);
-
-        if (printWindow) {
-          // Esperar a que se cargue el PDF antes de imprimir
-          printWindow.onload = () => {
-            printWindow.focus();
-            printWindow.print();
-          };
-        }
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.download = `factura_${new Date().toISOString().slice(0, 10)}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(pdfUrl);
+        }, 100);
+      } else {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = pdfUrl;
+        document.body.appendChild(iframe);
+        iframe.onload = () => {
+          setTimeout(() => {
+            iframe.contentWindow?.print();
+            setTimeout(() => document.body.removeChild(iframe), 5000);
+          }, 500);
+        };
       }
+
+      console.log(`PDF generado en ${performance.now() - startTime}ms`);
     } catch (error) {
       console.error('Error al generar PDF:', error);
     }
   };
 
-  const handleDownloadPDF = () => {
-    generatePDF('download');
-  };
+  const handleDownloadPDF = () => generatePDF('download');
+  const handlePrintPDF = () => generatePDF('print');
 
-  const handlePrintPDF = () => {
-    generatePDF('print');
-  };
-
+  // El resto de tu componente permanece igual...
   return (
     <>
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
@@ -89,6 +120,7 @@ export default function SalePDF({ total, subtotal, tax, openDialog, setOpenDialo
           </DialogHeader>
 
           <div className="max-h-[80vh] min-w-fit overflow-auto">
+            {/* Tu contenido HTML para el PDF (igual que antes) */}
             <div id="factura-html" ref={pdfRef} className="px-8 py-5 bg-white mx-auto shadow-none flex flex-col w-[210mm] h-[297mm]">
               {/* Encabezado */}
               <div className="flex justify-between">
@@ -108,7 +140,7 @@ export default function SalePDF({ total, subtotal, tax, openDialog, setOpenDialo
                 <span className="bg-blue-invoice pr-4 pl-1 py-1 text-white font-bold w-fit">Datos del Documento:</span>
                 <p className="px-2">Cliente: {customer?.name}</p>
                 <p className="px-2">Dirección: {customer?.address}</p>
-                <p className="px-2">RUC: {customer?.document}</p>
+                <p className="px-2">RUC: {customer?.documentNumber}</p>
                 <p className="px-2">Forma de pago: Efectivo</p>
               </div>
 
@@ -124,7 +156,7 @@ export default function SalePDF({ total, subtotal, tax, openDialog, setOpenDialo
                     </tr>
                   </thead>
                   <tbody>
-                    {documentDetails.map((item) => (
+                    {saleDetails.map((item) => (
                       <tr key={item.id}>
                         <td className="border-gray-500 p-2">{item.productName}</td>
                         <td className="border-gray-500 p-2 text-center">{item.quantity}</td>

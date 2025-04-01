@@ -19,15 +19,15 @@ export default function RightPanelHeading({ customers }: RightPanelHeadingProps)
   const [openCutomersPopover, setOpenCutomersPopover] = useState(false);
   const { control, setValue } = useFormContext<SaleForm>();
 
-  const documentTypeId = useWatch({ control: control, name: 'documentTypeId' });
+  const documentType = useWatch({ control: control, name: 'documentType' });
   const filteredCustomers = useMemo(() => {
-    if (documentTypeId === 1) {
-      return customers.filter((c) => c.type === 'RUC');
-    } else if (documentTypeId === 2) {
-      return customers.filter((c) => c.type === 'DNI');
+    if (documentType === 'Factura') {
+      return customers.filter((c) => c.documentType === 'RUC');
+    } else if (documentType === 'Boleta') {
+      return customers.filter((c) => c.documentType === 'DNI');
     }
     return customers;
-  }, [customers, documentTypeId]);
+  }, [customers, documentType]);
 
   return (
     <div className="p-3 border-b">
@@ -85,16 +85,16 @@ export default function RightPanelHeading({ customers }: RightPanelHeadingProps)
         {/* DOCUMENT TYPE ID */}
         <FormField
           control={control}
-          name="documentTypeId"
+          name="documentType"
           render={({ field }) => (
             <FormItem>
               <Select
-                name="documentTypeId"
+                name="documentType"
                 onValueChange={(value) => {
-                  field.onChange(parseInt(value));
+                  field.onChange(value);
                   setValue('customerId', 0);
                 }}
-                defaultValue={String(field.value)}
+                defaultValue={field.value}
               >
                 <FormControl>
                   <SelectTrigger className="w-[100px]">
@@ -102,8 +102,8 @@ export default function RightPanelHeading({ customers }: RightPanelHeadingProps)
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent className="min-w-auto w-[100px]">
-                  <SelectItem value={'1'}>Factura</SelectItem>
-                  <SelectItem value={'2'}>Boleta</SelectItem>
+                  <SelectItem value={'Factura'}>Factura</SelectItem>
+                  <SelectItem value={'Boleta'}>Boleta</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

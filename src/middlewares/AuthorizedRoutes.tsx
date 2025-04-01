@@ -8,7 +8,7 @@ export default function AuthorizedRoutes({ allowedRoles }: { allowedRoles: strin
     return <Navigate to="/auth/login" replace />;
   }
 
-  const hasAccess = user.roles.some((role) => allowedRoles.includes(role));
+  const hasAccess = allowedRoles.includes(user.role);
 
   return hasAccess ? <Outlet /> : <Navigate to="/auth/login" replace />;
 }

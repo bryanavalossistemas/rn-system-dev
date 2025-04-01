@@ -4,11 +4,11 @@ import { CustomerForm, Customer, CustomerSchema, CustomersSchema } from '@/schem
 import { isAxiosError } from 'axios';
 
 export const create = async ({ formData: data }: { formData: CustomerForm }) => {
-  const { name, type, document, address, phone, email } = data;
+  const { name, documentType, documentNumber, address, phone, email } = data;
   const formData = {
     name: name,
-    type: type,
-    document: document,
+    documentType: documentType,
+    documentNumber: documentNumber,
     address: address || null,
     phone: phone || null,
     email: email || null,
@@ -38,11 +38,11 @@ export const findAll = async (date?: string | null) => {
 };
 
 export const update = async ({ id, formData: data }: { id: Customer['id']; formData: CustomerForm }) => {
-  const { name, type, document, address, phone, email } = data;
+  const { name, documentType, documentNumber, address, phone, email } = data;
   const formData = {
     name: name,
-    type: type,
-    document: document,
+    documentType: documentType,
+    documentNumber: documentNumber,
     address: address || null,
     phone: phone || null,
     email: email || null,

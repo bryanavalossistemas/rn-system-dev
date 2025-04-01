@@ -7,19 +7,19 @@ import CartItemProductName from '@/components/admin/dashboard/pos/CartItemProduc
 import CartItemUnitPrice from '@/components/admin/dashboard/pos/CartItemUnitPrice';
 
 interface RightPanelBodyProps {
-  documentDetails: SaleForm['documentDetails'];
+  saleDetails: SaleForm['saleDetails'];
 }
 
-export default function RightPanelBody({ documentDetails }: RightPanelBodyProps) {
+export default function RightPanelBody({ saleDetails }: RightPanelBodyProps) {
   const { control, setValue } = useFormContext<SaleForm>();
 
   return (
     <div className="flex-1 overflow-y-auto p-3">
       <FormField
         control={control}
-        name="documentDetails"
+        name="saleDetails"
         render={() =>
-          documentDetails.length === 0 ? (
+          saleDetails.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-400">
               <ShoppingCart size={48} strokeWidth={1} />
               <p className="mt-2 text-lg">Tu comprobante está vacío</p>
@@ -27,11 +27,11 @@ export default function RightPanelBody({ documentDetails }: RightPanelBodyProps)
             </div>
           ) : (
             <div className="space-y-3">
-              {documentDetails.map((item) => {
+              {saleDetails.map((item) => {
                 return (
                   <div key={item.id} className="flex items-center gap-3 p-2 border rounded-sm text-sm">
                     <img
-                      src={item.product.images ? (item.product.images[0]?.path ?? '/placeholder.svg') : '/placeholder.svg'}
+                      src={item.images && item.images.length > 0 ? `${import.meta.env.VITE_API_URL}/${item.images[0]?.path}` : '/placeholder.svg'}
                       alt={item.productName}
                       className=" object-cover w-16 h-16 rounded shrink-0 shadow-sm"
                     />
@@ -51,15 +51,15 @@ export default function RightPanelBody({ documentDetails }: RightPanelBodyProps)
                         onClick={() => {
                           if (item.quantity === 1) {
                             setValue(
-                              'documentDetails',
-                              documentDetails.filter((d) => d.id !== item.id),
+                              'saleDetails',
+                              saleDetails.filter((d) => d.id !== item.id),
                             );
                             return;
                           }
 
                           setValue(
-                            'documentDetails',
-                            documentDetails.map((d) => (d.id === item.id ? { ...item, quantity: item.quantity - 1 } : d)),
+                            'saleDetails',
+                            saleDetails.map((d) => (d.id === item.id ? { ...item, quantity: item.quantity - 1 } : d)),
                           );
                         }}
                       >
@@ -73,8 +73,8 @@ export default function RightPanelBody({ documentDetails }: RightPanelBodyProps)
                         className="h-6 w-6"
                         onClick={() => {
                           setValue(
-                            'documentDetails',
-                            documentDetails.map((d) => (d.id === item.id ? { ...item, quantity: item.quantity + 1 } : d)),
+                            'saleDetails',
+                            saleDetails.map((d) => (d.id === item.id ? { ...item, quantity: item.quantity + 1 } : d)),
                           );
                         }}
                       >
@@ -88,8 +88,8 @@ export default function RightPanelBody({ documentDetails }: RightPanelBodyProps)
                       size="icon"
                       onClick={() => {
                         setValue(
-                          'documentDetails',
-                          documentDetails.filter((d) => d.id !== item.id),
+                          'saleDetails',
+                          saleDetails.filter((d) => d.id !== item.id),
                         );
                       }}
                     >

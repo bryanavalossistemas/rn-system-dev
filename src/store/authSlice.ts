@@ -1,15 +1,11 @@
 import { StateCreator } from 'zustand';
 import { jwtDecode } from 'jwt-decode';
-
-interface User {
-  email: string;
-  roles: string[];
-}
+import { User } from '@/schemas/user';
 
 interface Payload {
-  sub: number;
-  email: string;
-  roles: string[];
+  sub: User['id'];
+  email: User['email'];
+  role: User['role'];
   exp: number;
   iat: number;
 }
@@ -17,14 +13,14 @@ interface Payload {
 export interface AuthState {
   token: string | null;
   setToken: (token: string | null) => void;
-  user: User | null;
+  user: Omit<User, 'password' | 'id'> | null;
   logout: () => void;
   login: (token: string) => void;
 }
 
-const decodeToken = (token: string): User => {
+const decodeToken = (token: string): Omit<User, 'password' | 'id'> => {
   const decoded: Payload = jwtDecode(token);
-  return { email: decoded.email, roles: decoded.roles };
+  return { email: decoded.email, role: decoded.role };
 };
 
 const createAuthSlice: StateCreator<AuthState> = (set) => {
