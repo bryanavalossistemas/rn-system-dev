@@ -20,6 +20,7 @@ import SuppliersView from '@/views/admin/dashboard/SuppliersView';
 import PurchasesView from '@/views/admin/dashboard/PurchasesView';
 import POSView from '@/views/admin/dashboard/POSView';
 import CustomersView from '@/views/admin/dashboard/CustomersView';
+import SalesView from '@/views/admin/dashboard/SalesView';
 
 export default function Router() {
   return (
@@ -36,8 +37,9 @@ export default function Router() {
               <Route path="/admin/dashboard/inventory/products" element={<ProductsView />} />
               <Route path="/admin/dashboard/purchases/suppliers" element={<SuppliersView />} />
               <Route path="/admin/dashboard/purchases/purchases" element={<PurchasesView />} />
-              <Route path="/admin/dashboard/sales/customers" element={<CustomersView />} />
+              <Route path="/admin/dashboard/sales/sales" element={<SalesView />} />
               <Route path="/admin/dashboard/sales/pos" element={<POSView />} />
+              <Route path="/admin/dashboard/sales/customers" element={<CustomersView />} />
             </Route>
           </Route>
 

@@ -51,6 +51,7 @@ export default function LeftPanelProducts() {
                     productName: product.name,
                     quantity: 1,
                     unitPrice: product.salePrice,
+										costPrice: product.costPrice,
                     images: product.images,
                   },
                   ...getValues('saleDetails'),

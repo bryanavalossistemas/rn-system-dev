@@ -7,8 +7,8 @@ const PurchaseDetailBaseSchema = z.object({
   productName: z.string(),
   quantity: z.number().int(),
   unitPrice: z.number(),
-  productId: z.number().int().nullable(),
-  product: ProductSchema.nullable().optional(),
+  productId: z.number().int(),
+  product: ProductSchema.optional(),
   purchaseId: z.number().int(),
   createdAt: z.date({ coerce: true }),
 });
@@ -26,7 +26,7 @@ const PurchaseBaseSchema = z.object({
   subtotal: z.number(),
   tax: z.number(),
   total: z.number(),
-  supplierId: z.number().int().nullable(),
+  supplierId: z.number().int(),
   supplier: SupplierSchema.optional(),
   createdAt: z.date({ coerce: true }),
 });
@@ -57,7 +57,7 @@ export const PurchaseDetailFormSchema = z.object({
 export type PurchaseDetailForm = z.infer<typeof PurchaseDetailFormSchema>;
 
 export const PurchaseFormSchema = z.object({
-  supplierId: z.number().int().min(1, { message: 'Seleccionar proveedor' }).nullable(),
+  supplierId: z.number().int().min(1, { message: 'Seleccionar proveedor' }),
   documentType: z.enum(['Factura', 'Boleta']),
   purchaseDetails: z.array(PurchaseDetailFormSchema).refine(
     (value) => {

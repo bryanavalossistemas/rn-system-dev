@@ -108,7 +108,7 @@ export default function SalePDF({ total, subtotal, tax, openDialog, setOpenDialo
     <>
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent
-          className="min-w-fit"
+          className="min-w-fit max-h-[95svh] flex flex-col"
           onInteractOutside={(e) => e.preventDefault()}
           onCloseAutoFocus={() => {
             reset();
@@ -119,7 +119,7 @@ export default function SalePDF({ total, subtotal, tax, openDialog, setOpenDialo
             <DialogDescription>Vista previa del comprobante</DialogDescription>
           </DialogHeader>
 
-          <div className="max-h-[80vh] min-w-fit overflow-auto">
+          <div className="flex-1 min-w-fit overflow-auto">
             {/* Tu contenido HTML para el PDF (igual que antes) */}
             <div id="factura-html" ref={pdfRef} className="px-8 py-5 bg-white mx-auto shadow-none flex flex-col w-[210mm] h-[297mm]">
               {/* Encabezado */}

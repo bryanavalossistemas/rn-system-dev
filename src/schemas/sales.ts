@@ -8,7 +8,7 @@ const SaleDetailBaseSchema = z.object({
   quantity: z.number().int(),
   unitPrice: z.number(),
   costPrice: z.number(),
-  productId: z.number().int().nullable(),
+  productId: z.number().int(),
   product: ProductSchema.nullable().optional(),
   saleId: z.number().int(),
   createdAt: z.date({ coerce: true }),
@@ -43,6 +43,7 @@ export const SaleDetailFormSchema = z.object({
   productId: z.number().int().min(1, { message: 'Debe seleccionar un producto' }),
   productName: z.string().min(1, { message: 'El nombre es obligatorio' }),
   quantity: z.number({ coerce: true }).int().min(1, { message: 'Cantidad positiva' }),
+	costPrice: z.number(),
   unitPrice: z
     .string({ coerce: true })
     .refine((val) => /^-?\d+(\.\d{1,2})?$/.test(val), {
@@ -59,7 +60,7 @@ export const SaleDetailFormSchema = z.object({
 export type SaleDetailForm = z.infer<typeof SaleDetailFormSchema>;
 
 export const SaleFormSchema = z.object({
-  customerId: z.number().int().min(1, { message: 'Seleccionar proveedor' }).nullable(),
+  customerId: z.number().int().min(1, { message: 'Seleccionar cliente' }).nullable(),
   documentType: z.enum(['Factura', 'Boleta']),
   saleDetails: z.array(SaleDetailFormSchema).refine(
     (value) => {

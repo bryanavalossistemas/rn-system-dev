@@ -50,7 +50,7 @@ export const update = async ({ id, formData: data }: { id: Purchase['id']; formD
       return {
         id: d.created ? undefined : d.id,
         productId: d.productId,
-				productName: d.productName,
+        productName: d.productName,
         quantity: d.quantity,
         unitPrice: d.unitPrice,
         deleted: d.deleted,
