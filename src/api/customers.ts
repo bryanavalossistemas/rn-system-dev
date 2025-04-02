@@ -1,5 +1,5 @@
 import api from '@/config/axios';
-import { delay, getDateRange } from '@/lib/utils';
+import { getDateRange } from '@/lib/utils';
 import { CustomerForm, Customer, CustomerSchema, CustomersSchema } from '@/schemas/customers';
 import { isAxiosError } from 'axios';
 

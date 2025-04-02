@@ -1,5 +1,5 @@
 import api from '@/config/axios';
-import { delay, getDateRange } from '@/lib/utils';
+import { getDateRange } from '@/lib/utils';
 import { ProductSchema, ProductsSchema, Product, ProductForm } from '@/schemas/products';
 import { isAxiosError } from 'axios';
 
