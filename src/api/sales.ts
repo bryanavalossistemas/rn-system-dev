@@ -19,8 +19,6 @@ export const create = async ({ formData: data }: { formData: SaleForm }) => {
     }),
   };
 
-  await delay(3);
-
   try {
     return SaleSchema.parse((await api.post('/sales', formData)).data);
   } catch (error) {
@@ -31,7 +29,6 @@ export const create = async ({ formData: data }: { formData: SaleForm }) => {
 };
 
 export const findAll = async (date?: string | null) => {
-  await delay(3);
   let res;
 
   if (date === null || date === undefined) {

@@ -14,7 +14,6 @@ export const create = async ({ formData }: { formData: BrandForm }) => {
 };
 
 export const findAll = async (date?: string | null) => {
-  await delay(3);
   let res;
 
   if (date === null || date === undefined) {

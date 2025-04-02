@@ -18,8 +18,8 @@ export default function LoginForm({ ...props }: ComponentProps<'form'>) {
   const form = useForm<LoginFormType>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'bryanavalossistemas@gmail.com',
+      password: 'password',
     },
   });
 

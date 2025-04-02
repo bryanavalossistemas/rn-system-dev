@@ -24,7 +24,6 @@ export const create = async ({ formData: data }: { formData: CustomerForm }) => 
 };
 
 export const findAll = async (date?: string | null) => {
-  await delay(3);
   let res;
 
   if (date === null || date === undefined) {
