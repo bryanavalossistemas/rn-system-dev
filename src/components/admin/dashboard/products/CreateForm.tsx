@@ -113,8 +113,6 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
   });
 
   const onSubmit = (formData: ProductForm) => {
-    console.log(formData);
-    return;
     mutate({ formData });
   };
 
