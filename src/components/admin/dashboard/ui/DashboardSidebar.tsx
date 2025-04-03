@@ -77,7 +77,7 @@ export default function DashboardSidebar({ ...props }: React.ComponentProps<type
         icon: PiggyBankIcon,
         isActive: pathname.includes('/admin/dashboard/sales'),
         items: [
-					{
+          {
             title: 'Ventas',
             url: '/admin/dashboard/sales/sales',
             isActive: pathname === '/admin/dashboard/sales/sales',

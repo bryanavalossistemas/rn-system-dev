@@ -5,9 +5,33 @@ import { isAxiosError } from 'axios';
 
 export const create = async ({ formData: data }: { formData: ProductForm }) => {
   const formData = new FormData();
-  const { name, salePrice, costPrice, stock, categoryId, brandId, newImages } = data;
+  const {
+    name,
+    salePrice,
+    costPrice,
+    stock,
+    categoryId,
+    brandId,
+    newImages,
+    barCode,
+    description,
+    ecommercePercentageDiscount,
+    ecommerceSalePrice,
+    measurementQuantity,
+    measurementUnit,
+    showInEcommerce,
+    sku,
+  } = data;
   formData.append('name', name);
   formData.append('salePrice', `${salePrice}`);
+  formData.append('ecommerceSalePrice', `${ecommerceSalePrice}`);
+  formData.append('barCode', `${barCode}`);
+  formData.append('description', `${description}`);
+  formData.append('ecommercePercentageDiscount', `${ecommercePercentageDiscount}`);
+  formData.append('measurementQuantity', `${measurementQuantity}`);
+  formData.append('measurementUnit', `${measurementUnit}`);
+  formData.append('showInEcommerce', `${showInEcommerce}`);
+  formData.append('sku', `${sku}`);
   formData.append('costPrice', `${costPrice}`);
   formData.append('stock', `${stock}`);
   if (categoryId) formData.append('categoryId', `${categoryId}`);
@@ -42,9 +66,34 @@ export const findAll = async (date?: string | null) => {
 
 export const update = async ({ id, formData: data }: { id: Product['id']; formData: ProductForm }) => {
   const formData = new FormData();
-  const { name, salePrice, costPrice, stock, categoryId, brandId, images, newImages } = data;
+  const {
+    name,
+    salePrice,
+    costPrice,
+    stock,
+    categoryId,
+    brandId,
+    images,
+    newImages,
+    ecommerceSalePrice,
+    barCode,
+    description,
+    ecommercePercentageDiscount,
+    measurementQuantity,
+    measurementUnit,
+    showInEcommerce,
+    sku,
+  } = data;
   formData.append('name', name);
   formData.append('salePrice', `${salePrice}`);
+  formData.append('ecommerceSalePrice', `${ecommerceSalePrice}`);
+  formData.append('barCode', `${barCode}`);
+  formData.append('description', `${description}`);
+  formData.append('ecommercePercentageDiscount', `${ecommercePercentageDiscount}`);
+  formData.append('measurementQuantity', `${measurementQuantity}`);
+  formData.append('measurementUnit', `${measurementUnit}`);
+  formData.append('showInEcommerce', `${showInEcommerce}`);
+  formData.append('sku', `${sku}`);
   formData.append('costPrice', `${costPrice}`);
   formData.append('stock', `${stock}`);
   if (categoryId) formData.append('categoryId', `${categoryId}`);

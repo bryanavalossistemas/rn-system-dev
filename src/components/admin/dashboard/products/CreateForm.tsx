@@ -24,12 +24,20 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
     defaultValues: {
       name: '',
       salePrice: 0,
+      ecommerceSalePrice: 0,
       costPrice: 0,
       stock: 0,
       categoryId: 0,
       brandId: 0,
       newImages: [],
       images: [],
+      description: '',
+      barCode: '',
+      sku: '',
+      measurementUnit: '',
+      measurementQuantity: 0,
+      showInEcommerce: true,
+      ecommercePercentageDiscount: 0,
     },
   });
 
@@ -44,7 +52,23 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
 
       const previousItems = queryClient.getQueryData(date === null ? ['products'] : ['products', date]);
 
-      const { name, salePrice, costPrice, stock, categoryId, brandId, newImages } = formData;
+      const {
+        name,
+        salePrice,
+        costPrice,
+        stock,
+        categoryId,
+        brandId,
+        newImages,
+        barCode,
+        description,
+        measurementQuantity,
+        measurementUnit,
+        showInEcommerce,
+        sku,
+        ecommercePercentageDiscount,
+        ecommerceSalePrice,
+      } = formData;
 
       const item: Omit<Product, 'createdAt'> & {
         isOptimistic?: boolean;
@@ -52,11 +76,19 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
         id: Date.now(),
         name: name,
         salePrice: salePrice,
+        ecommerceSalePrice: ecommerceSalePrice,
         costPrice: costPrice,
         stock: stock,
         categoryId: categoryId ?? null,
         brandId: brandId ?? null,
         images: newImages.length > 0 ? [{ id: Date.now(), path: URL.createObjectURL(newImages[newImages.length - 1]) }] : [],
+        barCode: barCode,
+        description: description,
+        measurementUnit: measurementUnit,
+        sku: sku,
+        measurementQuantity: measurementQuantity,
+        ecommercePercentageDiscount: ecommercePercentageDiscount,
+        showInEcommerce: showInEcommerce,
         isOptimistic: true,
       };
 
@@ -81,12 +113,14 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
   });
 
   const onSubmit = (formData: ProductForm) => {
+    console.log(formData);
+    return;
     mutate({ formData });
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="p-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="p-2 flex flex-col">
         <FormFields form={form} categories={categories} brands={brands} />
         <div className="flex flex-col sm:flex-row-reverse gap-2 mt-2 sm:mt-4">
           <Button type="submit" disabled={isPending}>

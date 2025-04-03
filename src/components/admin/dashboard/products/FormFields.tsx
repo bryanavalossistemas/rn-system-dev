@@ -5,6 +5,8 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { Brand } from '@/schemas/brands';
 import { Category } from '@/schemas/categories';
@@ -57,6 +59,7 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
 
   return (
     <div className="grid gap-6">
+      {/* NOMBRE */}
       <FormField
         control={form.control}
         name="name"
@@ -70,6 +73,8 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
           </FormItem>
         )}
       />
+
+      {/* SALE PRICE */}
       <FormField
         control={form.control}
         name="salePrice"
@@ -83,6 +88,23 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
           </FormItem>
         )}
       />
+
+      {/* ECOMMERCE SALEPRICE */}
+      <FormField
+        control={form.control}
+        name="ecommerceSalePrice"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Precio de venta en tienda virtual</FormLabel>
+            <FormControl>
+              <Input placeholder="110.00" type="number" autoComplete="on" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* COST PRICE */}
       <FormField
         control={form.control}
         name="costPrice"
@@ -96,6 +118,8 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
           </FormItem>
         )}
       />
+
+      {/* STOCK */}
       <FormField
         control={form.control}
         name="stock"
@@ -110,7 +134,7 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
         )}
       />
       <>
-        {/* MOBILE */}
+        {/* CATEGORY ID MOBILE */}
         <FormField
           control={form.control}
           name="categoryId"
@@ -158,7 +182,8 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
             </FormItem>
           )}
         />
-        {/* DESKTOP */}
+
+        {/* CATEGORY ID DESKTOP */}
         <FormField
           control={form.control}
           name="categoryId"
@@ -204,7 +229,7 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
         />
       </>
       <>
-        {/* MOBILE */}
+        {/* BRAND ID MOBILE */}
         <FormField
           control={form.control}
           name="brandId"
@@ -252,7 +277,8 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
             </FormItem>
           )}
         />
-        {/* DESKTOP */}
+
+        {/* BRAND ID DESKTOP */}
         <FormField
           control={form.control}
           name="brandId"
@@ -297,6 +323,8 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
           )}
         />
       </>
+
+      {/* IMAGES */}
       <div className="grid gap-2">
         <FormField
           control={form.control}
@@ -341,6 +369,110 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
           </div>
         )}
       </div>
+
+      {/* DESCRIPCION */}
+      <FormField
+        control={form.control}
+        name="description"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Descripción</FormLabel>
+            <FormControl>
+              <Textarea placeholder="Descripción del producto" autoComplete="on" className="resize-none" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* BARCODE */}
+      <FormField
+        control={form.control}
+        name="barCode"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Código de barras</FormLabel>
+            <FormControl>
+              <Input placeholder="12341513413" type="text" autoComplete="on" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* SKU */}
+      <FormField
+        control={form.control}
+        name="sku"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Código interno</FormLabel>
+            <FormControl>
+              <Input placeholder="HAR-00001" type="text" autoComplete="on" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* Measurement Unit */}
+      <FormField
+        control={form.control}
+        name="measurementUnit"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Unidad de medida</FormLabel>
+            <FormControl>
+              <Input placeholder="kg, caja, unidad" type="text" autoComplete="on" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* Measurement Quantity */}
+      <FormField
+        control={form.control}
+        name="measurementQuantity"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Cantidad de medida</FormLabel>
+            <FormControl>
+              <Input placeholder="10" type="number" autoComplete="on" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* SHOW IN ECOMMERCE */}
+      <FormField
+        control={form.control}
+        name="showInEcommerce"
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+            <FormLabel>¿Mostrar en tienda virtual?</FormLabel>
+            <FormControl>
+              <Switch checked={field.value} onCheckedChange={field.onChange} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+
+      {/* ECOMMERCE PERCENTAGE DISCCOUNT */}
+      <FormField
+        control={form.control}
+        name="ecommercePercentageDiscount"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Porcentaje de descuento en tienda virtual</FormLabel>
+            <FormControl>
+              <Input placeholder="10" type="number" autoComplete="on" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 }

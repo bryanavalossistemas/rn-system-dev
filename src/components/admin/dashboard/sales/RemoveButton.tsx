@@ -35,9 +35,7 @@ export default function RemoveButton({ id }: RemoveButtonProps) {
 
       const previousItems = queryClient.getQueryData(date === null ? ['sales'] : ['sales', date]);
 
-      queryClient.setQueryData(date === null ? ['sales'] : ['sales', date], (oldItems: Sale[]) =>
-        oldItems.filter((item) => item.id !== id),
-      );
+      queryClient.setQueryData(date === null ? ['sales'] : ['sales', date], (oldItems: Sale[]) => oldItems.filter((item) => item.id !== id));
 
       setOpen(false);
       toast.success('Compra eliminada correctamente');

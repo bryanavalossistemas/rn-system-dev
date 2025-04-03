@@ -4,8 +4,16 @@ export const ProductSchema = z.object({
   id: z.number().int(),
   name: z.string(),
   salePrice: z.number(),
-  costPrice: z.number(),
+  ecommerceSalePrice: z.number(),
+  ecommercePercentageDiscount: z.number().int(),
   stock: z.number().int(),
+  costPrice: z.number(),
+  description: z.string().nullable(),
+  barCode: z.string().nullable(),
+  sku: z.string().nullable(),
+  measurementUnit: z.string().nullable(),
+  measurementQuantity: z.number(),
+  showInEcommerce: z.boolean(),
   categoryId: z.number().int().nullable(),
   brandId: z.number().int().nullable(),
   images: z.array(z.object({ id: z.number().int(), path: z.string() })).optional(),
@@ -17,6 +25,15 @@ export const ProductsSchema = z.array(ProductSchema);
 export const ProductFormSchema = z.object({
   name: z.string().min(1, { message: 'El nombre es obligatorio' }),
   salePrice: z
+    .string({ coerce: true })
+    .refine((val) => /^-?\d+(\.\d{1,2})?$/.test(val), {
+      message: 'El número debe tener como máximo dos decimales',
+    })
+    .transform(Number)
+    .refine((val) => val >= 0, {
+      message: 'El número debe ser mayor o igual a cero.',
+    }),
+  ecommerceSalePrice: z
     .string({ coerce: true })
     .refine((val) => /^-?\d+(\.\d{1,2})?$/.test(val), {
       message: 'El número debe tener como máximo dos decimales',
@@ -47,5 +64,22 @@ export const ProductFormSchema = z.object({
       deleted: z.boolean().optional(),
     }),
   ),
+  description: z.string(),
+  barCode: z.string(),
+  sku: z.string(),
+  measurementUnit: z.string(),
+  measurementQuantity: z
+    .string({ coerce: true })
+    .refine((val) => /^-?\d+(\.\d{1,2})?$/.test(val), {
+      message: 'El número debe tener como máximo dos decimales',
+    })
+    .transform(Number)
+    .refine((val) => val >= 0, {
+      message: 'El número debe ser mayor o igual a cero.',
+    }),
+  showInEcommerce: z.boolean(),
+  ecommercePercentageDiscount: z.number({ coerce: true }).int({ message: 'Deber ser un número entero' }).min(0, {
+    message: 'El número debe ser mayor o igual a cero.',
+  }),
 });
 export type ProductForm = z.infer<typeof ProductFormSchema>;

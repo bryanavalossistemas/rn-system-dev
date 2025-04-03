@@ -35,7 +35,7 @@ export default function CreateForm({ purchaseForm, setOpen, products }: CreateFo
         quantity: formData.quantity,
         unitPrice: formData.unitPrice,
         productId: formData.productId,
-				costPrice: formData.costPrice,
+        costPrice: formData.costPrice,
         created: formData.created,
       },
       ...oldDetails,

@@ -20,19 +20,44 @@ interface UpdateFormProps {
 }
 
 export default function UpdateForm({ setOpen, item, categories, brands }: UpdateFormProps) {
-  const { id, name, salePrice, costPrice, stock, categoryId, brandId, images } = item;
+  const {
+    id,
+    name,
+    salePrice,
+    costPrice,
+    stock,
+    categoryId,
+    brandId,
+    images,
+    barCode,
+    description,
+    ecommercePercentageDiscount,
+    ecommerceSalePrice,
+    measurementQuantity,
+    measurementUnit,
+    showInEcommerce,
+    sku,
+  } = item;
 
   const form = useForm<ProductForm>({
     resolver: zodResolver(ProductFormSchema),
     defaultValues: {
       name: name,
       salePrice: salePrice,
+      ecommerceSalePrice: ecommerceSalePrice,
       costPrice: costPrice,
       stock: stock,
       categoryId: categoryId || 0,
       brandId: brandId || 0,
       images: images,
       newImages: [],
+      barCode: barCode || '',
+      description: description || '',
+      sku: sku || '',
+      measurementUnit: measurementUnit || '',
+      ecommercePercentageDiscount: ecommercePercentageDiscount,
+      measurementQuantity: measurementQuantity,
+      showInEcommerce: showInEcommerce,
     },
   });
 
@@ -47,7 +72,24 @@ export default function UpdateForm({ setOpen, item, categories, brands }: Update
 
       const previousItems = queryClient.getQueryData(date === null ? ['products'] : ['products', date]);
 
-      const { name, salePrice, costPrice, stock, categoryId, brandId, newImages, images } = formData;
+      const {
+        name,
+        salePrice,
+        costPrice,
+        stock,
+        categoryId,
+        brandId,
+        newImages,
+        images,
+        barCode,
+        description,
+        ecommercePercentageDiscount,
+        ecommerceSalePrice,
+        measurementQuantity,
+        measurementUnit,
+        showInEcommerce,
+        sku,
+      } = formData;
       const noDeletedProductImages = images.length > 0 ? images.filter((p) => p.deleted === undefined) : [];
       const updatedItem: Omit<Product, 'createdAt'> & {
         isOptimistic?: boolean;
@@ -70,6 +112,14 @@ export default function UpdateForm({ setOpen, item, categories, brands }: Update
             : noDeletedProductImages.length > 0
               ? noDeletedProductImages
               : [],
+        barCode: barCode,
+        description: description,
+        ecommercePercentageDiscount: ecommercePercentageDiscount,
+        ecommerceSalePrice: ecommerceSalePrice,
+        measurementQuantity: measurementQuantity,
+        measurementUnit: measurementUnit,
+        showInEcommerce: showInEcommerce,
+        sku: sku,
         isOptimistic: true,
       };
 

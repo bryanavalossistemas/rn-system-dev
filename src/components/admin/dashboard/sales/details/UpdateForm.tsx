@@ -24,7 +24,7 @@ export default function UpdateForm({ purchaseForm, setOpen, products, item }: Up
       productName: productName,
       quantity: quantity,
       unitPrice: unitPrice,
-			costPrice: costPrice,
+      costPrice: costPrice,
       created: created,
     },
   });
@@ -39,7 +39,7 @@ export default function UpdateForm({ purchaseForm, setOpen, products, item }: Up
             productName: formData.productName,
             quantity: formData.quantity,
             unitPrice: formData.unitPrice,
-						costPrice: formData.costPrice,
+            costPrice: formData.costPrice,
             created: formData.created,
           }
         : d,

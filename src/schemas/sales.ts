@@ -43,7 +43,7 @@ export const SaleDetailFormSchema = z.object({
   productId: z.number().int().min(1, { message: 'Debe seleccionar un producto' }),
   productName: z.string().min(1, { message: 'El nombre es obligatorio' }),
   quantity: z.number({ coerce: true }).int().min(1, { message: 'Cantidad positiva' }),
-	costPrice: z.number(),
+  costPrice: z.number(),
   unitPrice: z
     .string({ coerce: true })
     .refine((val) => /^-?\d+(\.\d{1,2})?$/.test(val), {

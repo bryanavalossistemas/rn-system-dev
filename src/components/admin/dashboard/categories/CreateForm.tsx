@@ -19,6 +19,8 @@ export default function CreateForm({ setOpen }: CreateFormProps) {
     resolver: zodResolver(CategoryFormSchema),
     defaultValues: {
       name: '',
+      oldImage: null,
+      newImage: null,
     },
   });
 
@@ -33,10 +35,11 @@ export default function CreateForm({ setOpen }: CreateFormProps) {
 
       const previousItems = queryClient.getQueryData(date === null ? ['categories'] : ['categories', date]);
 
-      const { name } = formData;
+      const { name, newImage } = formData;
       const item: Omit<Category, 'createdAt'> & { isOptimistic: boolean } = {
         id: Date.now(),
         name: name,
+        image: newImage === null ? null : URL.createObjectURL(newImage),
         isOptimistic: true,
       };
 

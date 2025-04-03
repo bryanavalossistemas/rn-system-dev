@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const CategorySchema = z.object({
   id: z.number().int(),
   name: z.string().min(1, { message: 'El nombre es obligatorio' }),
+  image: z.string().nullable(),
   createdAt: z.date({ coerce: true }),
 });
 export type Category = z.infer<typeof CategorySchema>;
@@ -10,5 +11,7 @@ export const CategoriesSchema = z.array(CategorySchema);
 
 export const CategoryFormSchema = z.object({
   name: z.string().min(1, { message: 'El nombre es obligatorio' }),
+  oldImage: z.string().nullable(),
+  newImage: z.instanceof(File).nullable(),
 });
 export type CategoryForm = z.infer<typeof CategoryFormSchema>;
