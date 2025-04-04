@@ -3,7 +3,6 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { CategoryForm } from '@/schemas/categories';
-import { useEffect, useRef } from 'react';
 import { UseFormReturn, useWatch } from 'react-hook-form';
 
 interface FormFieldsProps {
@@ -12,28 +11,24 @@ interface FormFieldsProps {
 
 export default function FormFields({ form }: FormFieldsProps) {
   const newImage = useWatch({ control: form.control, name: 'newImage' });
-  const oldImage = useWatch({ control: form.control, name: 'oldImage' });
-  const inputRef = useRef<HTMLInputElement>(null);
+  const image = useWatch({ control: form.control, name: 'image' });
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
       if (files.length) {
         for (const file of files) {
-          form.setValue('oldImage', null);
           form.setValue('newImage', file);
+        }
+        // Delete oldImage if exists
+        if (image) {
+          form.setValue('image', null);
         }
       } else {
         form.setValue('newImage', null);
       }
     }
   };
-
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.select();
-    }
-  }, []);
 
   return (
     <div className="grid gap-6">
@@ -44,7 +39,7 @@ export default function FormFields({ form }: FormFieldsProps) {
           <FormItem>
             <FormLabel>Nombre</FormLabel>
             <FormControl>
-              <Input placeholder="Harinas" type="text" autoComplete="on" autoFocus {...field} ref={inputRef} />
+              <Input placeholder="Harinas" type="text" autoComplete="on" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -64,12 +59,12 @@ export default function FormFields({ form }: FormFieldsProps) {
             </FormItem>
           )}
         />
-        {oldImage && (
+        {image && (
           <>
             <div className="flex justify-center">
               <div className="grid">
-                <img src={`${import.meta.env.VITE_API_URL}/${oldImage}`} alt={`${oldImage}`} className="w-28 h-28 object-cover rounded-t-sm" />
-                <Button type="button" onClick={() => form.setValue('oldImage', null)} className="rounded-t-none">
+                <img src={`${import.meta.env.VITE_API_URL}/uploads/${image}`} alt={`${image}`} className="w-28 h-28 object-cover rounded-t-sm" />
+                <Button type="button" onClick={() => form.setValue('image', null)} className="rounded-t-none">
                   Eliminar
                 </Button>
               </div>

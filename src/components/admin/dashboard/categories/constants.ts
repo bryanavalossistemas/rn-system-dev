@@ -3,6 +3,7 @@ interface Columns {
 }
 
 export const columns: Columns = {
+  image: 'Imagen',
   name: 'Nombre',
 };
 

@@ -20,7 +20,7 @@ export default function UpdateForm({ setOpen, item }: UpdateFormProps) {
 
   const form = useForm<CategoryForm>({
     resolver: zodResolver(CategoryFormSchema),
-    defaultValues: { name: name, newImage: null, oldImage: image },
+    defaultValues: { name: name, newImage: null, image: image },
   });
 
   const [searchParams] = useSearchParams();
@@ -34,11 +34,11 @@ export default function UpdateForm({ setOpen, item }: UpdateFormProps) {
 
       const previousItems = queryClient.getQueryData(date === null ? ['categories'] : ['categories', date]);
 
-      const { name, newImage, oldImage } = formData;
+      const { name, newImage, image } = formData;
       const updatedItem: Omit<Category, 'createdAt'> & { isOptimistic: boolean } = {
         id: id,
         name: name,
-        image: oldImage ? oldImage : newImage === null ? null : URL.createObjectURL(newImage),
+        image: image ? image : newImage === null ? null : URL.createObjectURL(newImage),
         isOptimistic: true,
       };
 

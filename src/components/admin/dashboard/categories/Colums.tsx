@@ -36,7 +36,7 @@ export const columns = [
             <div className="w-20 h-20">
               <img
                 className="w-full h-full object-cover rounded-sm"
-                src={`${import.meta.env.VITE_API_URL}/${image}`}
+                src={`${import.meta.env.VITE_API_URL}/uploads/${image}`}
                 onError={(e) => {
                   const img = e.target;
                   if (img instanceof HTMLImageElement) {

@@ -25,7 +25,7 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Editar Categoría</DrawerTitle>
-            <DrawerDescription>Actualiza el formulario para editar una categoria</DrawerDescription>
+            <DrawerDescription>Actualiza el formulario para editar una categoría</DrawerDescription>
           </DrawerHeader>
           <UpdateForm setOpen={setOpenDrawer} item={item} />
         </DrawerContent>
@@ -41,7 +41,7 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
         <DialogContent className="w-sm">
           <DialogHeader>
             <DialogTitle>Editar Categoría</DialogTitle>
-            <DialogDescription>Actualiza el formulario para editar una categoria</DialogDescription>
+            <DialogDescription>Actualiza el formulario para editar una categoría</DialogDescription>
           </DialogHeader>
           <UpdateForm setOpen={setOpenDialog} item={item} />
         </DialogContent>

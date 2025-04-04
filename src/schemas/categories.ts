@@ -11,7 +11,7 @@ export const CategoriesSchema = z.array(CategorySchema);
 
 export const CategoryFormSchema = z.object({
   name: z.string().min(1, { message: 'El nombre es obligatorio' }),
-  oldImage: z.string().nullable(),
   newImage: z.instanceof(File).nullable(),
+  image: z.string().nullable(),
 });
 export type CategoryForm = z.infer<typeof CategoryFormSchema>;

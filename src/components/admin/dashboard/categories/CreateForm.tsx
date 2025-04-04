@@ -19,8 +19,8 @@ export default function CreateForm({ setOpen }: CreateFormProps) {
     resolver: zodResolver(CategoryFormSchema),
     defaultValues: {
       name: '',
-      oldImage: null,
       newImage: null,
+      image: null,
     },
   });
 

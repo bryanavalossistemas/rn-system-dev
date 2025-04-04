@@ -7,7 +7,7 @@ export const create = async ({ formData: data }: { formData: CategoryForm }) => 
   const formData = new FormData();
   const { name, newImage } = data;
   formData.append('name', name);
-  if (newImage) formData.append('image', newImage);
+  if (newImage) formData.append('newImage', newImage);
 
   try {
     return CategorySchema.parse((await api.post('/categories', formData)).data);
@@ -33,10 +33,10 @@ export const findAll = async (date?: string | null) => {
 
 export const update = async ({ id, formData: data }: { id: Category['id']; formData: CategoryForm }) => {
   const formData = new FormData();
-  const { name, newImage, oldImage } = data;
+  const { name, newImage, image } = data;
   formData.append('name', name);
-  if (newImage) formData.append('image', newImage);
-  if (oldImage) formData.append('oldImage', oldImage);
+  if (newImage) formData.append('newImage', newImage);
+  formData.append('image', String(image));
 
   try {
     return CategorySchema.parse((await api.patch(`/categories/${id}`, formData)).data);
