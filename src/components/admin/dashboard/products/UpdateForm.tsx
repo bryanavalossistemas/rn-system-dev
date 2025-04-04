@@ -53,7 +53,7 @@ export default function UpdateForm({ setOpen, item, categories, brands, measurem
       measurementUnitId: measurementUnitId || 0,
       measurementQuantity: measurementQuantity,
       brandId: brandId || 0,
-      images: images,
+      images: images ?? [],
       newImages: [],
       barCode: barCode || '',
       description: description || '',
@@ -92,7 +92,7 @@ export default function UpdateForm({ setOpen, item, categories, brands, measurem
         showInEcommerce,
         sku,
       } = formData;
-      const noDeletedProductImages = images.length > 0 ? images.filter((p) => p.deleted === undefined) : [];
+      const noDeletedProductImages = images.filter((p) => !p.deleted);
       const updatedItem: Omit<Product, 'createdAt'> & {
         isOptimistic?: boolean;
       } = {
@@ -106,15 +106,15 @@ export default function UpdateForm({ setOpen, item, categories, brands, measurem
         measurementUnitId: measurementUnitId ?? null,
         measurementQuantity: measurementQuantity,
         images:
-          newImages.length > 0
-            ? [
-                {
-                  id: Date.now(),
-                  path: URL.createObjectURL(newImages[0]),
-                },
-              ]
-            : noDeletedProductImages.length > 0
-              ? noDeletedProductImages
+          noDeletedProductImages.length > 0
+            ? noDeletedProductImages
+            : newImages.length > 0
+              ? [
+                  {
+                    id: Date.now(),
+                    path: URL.createObjectURL(newImages[0]),
+                  },
+                ]
               : [],
         barCode: barCode,
         description: description,

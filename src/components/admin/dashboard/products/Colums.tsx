@@ -35,7 +35,17 @@ export const columns = [
         return (
           <div className="flex justify-center">
             <div className="w-20 h-20">
-              <img className="w-full h-full object-cover rounded-sm" src={`${import.meta.env.VITE_API_URL}/${images[0].path}`} />
+              <img
+                className="w-full h-full object-cover rounded-sm"
+                src={`${import.meta.env.VITE_API_URL}/uploads/${images[0].path}`}
+                onError={(e) => {
+                  const img = e.target;
+                  if (img instanceof HTMLImageElement) {
+                    img.onerror = null;
+                    img.src = images[0].path;
+                  }
+                }}
+              />
             </div>
           </div>
         );

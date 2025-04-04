@@ -83,7 +83,7 @@ export default function CreateForm({ categories, brands, measurementUnits, setOp
         stock: stock,
         categoryId: categoryId ?? null,
         brandId: brandId ?? null,
-        images: newImages.length > 0 ? [{ id: Date.now(), path: URL.createObjectURL(newImages[newImages.length - 1]) }] : [],
+        images: newImages.length > 0 ? [{ id: Date.now(), path: URL.createObjectURL(newImages[0]) }] : [],
         barCode: barCode,
         description: description,
         measurementUnitId: measurementUnitId ?? null,

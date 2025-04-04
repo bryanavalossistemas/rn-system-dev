@@ -36,7 +36,7 @@ export const update = async ({ id, formData: data }: { id: Category['id']; formD
   const { name, newImage, image } = data;
   formData.append('name', name);
   if (newImage) formData.append('newImage', newImage);
-  formData.append('image', String(image));
+  formData.append('image', `${image === null ? 'null' : image}`);
 
   try {
     return CategorySchema.parse((await api.patch(`/categories/${id}`, formData)).data);

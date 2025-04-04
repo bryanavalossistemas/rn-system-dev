@@ -25,22 +25,20 @@ export const create = async ({ formData: data }: { formData: ProductForm }) => {
   formData.append('name', name);
   formData.append('salePrice', `${salePrice}`);
   formData.append('ecommerceSalePrice', `${ecommerceSalePrice}`);
-  formData.append('barCode', `${barCode}`);
-  formData.append('description', `${description}`);
+  formData.append('barCode', `${barCode || 'null'}`);
+  formData.append('description', `${description || 'null'}`);
+  formData.append('sku', `${sku || 'null'}`);
   formData.append('ecommercePercentageDiscount', `${ecommercePercentageDiscount}`);
   formData.append('measurementQuantity', `${measurementQuantity}`);
   formData.append('showInEcommerce', `${showInEcommerce}`);
-  formData.append('sku', `${sku}`);
   formData.append('costPrice', `${costPrice}`);
   formData.append('stock', `${stock}`);
   formData.append('measurementUnitId', `${measurementUnitId === 0 ? 'null' : measurementUnitId}`);
   formData.append('categoryId', `${categoryId === 0 ? 'null' : categoryId}`);
   formData.append('brandId', `${brandId === 0 ? 'null' : brandId}`);
-  if (newImages.length > 0) {
-    newImages.forEach((image) => {
-      formData.append('images', image);
-    });
-  }
+  newImages.forEach((newImage) => {
+    formData.append('newImages', newImage);
+  });
 
   try {
     return ProductSchema.parse((await api.post('/products', formData)).data);
@@ -98,12 +96,10 @@ export const update = async ({ id, formData: data }: { id: Product['id']; formDa
   formData.append('measurementUnitId', `${measurementUnitId === 0 ? 'null' : measurementUnitId}`);
   formData.append('categoryId', `${categoryId === 0 ? 'null' : categoryId}`);
   formData.append('brandId', `${brandId === 0 ? 'null' : brandId}`);
-  if (images) formData.append('oldImages', JSON.stringify(images));
-  if (newImages) {
-    newImages.forEach((image) => {
-      formData.append('images', image);
-    });
-  }
+  if (images.length > 0) formData.append('images', JSON.stringify(images));
+  newImages.forEach((newImage) => {
+    formData.append('newImages', newImage);
+  });
 
   try {
     return ProductSchema.parse((await api.patch(`/products/${id}`, formData)).data);

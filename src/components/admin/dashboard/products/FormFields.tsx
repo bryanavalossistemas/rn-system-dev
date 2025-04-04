@@ -33,15 +33,6 @@ export default function FormFields({ form, categories, brands, measurementUnits 
   const newImages = useWatch({ control: form.control, name: 'newImages' });
   const images = useWatch({ control: form.control, name: 'images' });
 
-  const handleProductImageChange = (imageId: number) => {
-    if (images.length > 0) {
-      form.setValue(
-        'images',
-        images.map((p) => (p.id !== imageId ? p : { ...p, deleted: true })),
-      );
-    }
-  };
-
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
@@ -520,24 +511,32 @@ export default function FormFields({ form, categories, brands, measurementUnits 
             </FormItem>
           )}
         />
-        {images && images.length > 0 && images.some((p) => p.deleted === undefined) && (
+        {images && images.length > 0 && (
           <>
             <div className="flex flex-wrap gap-4 justify-center">
-              {images.map(
-                (image, index) =>
-                  !image.deleted && (
-                    <div key={image.id} className="grid">
-                      <img
-                        src={`${import.meta.env.VITE_API_URL}/${image.path}`}
-                        alt={`Vista previa ${index + 1}`}
-                        className="w-28 h-28 object-cover rounded-t-sm"
-                      />
-                      <Button type="button" onClick={() => handleProductImageChange(image.id)} className="rounded-t-none">
-                        Eliminar
-                      </Button>
-                    </div>
-                  ),
-              )}
+              {images
+                .filter((i) => !i.deleted)
+                .map((image) => (
+                  <div key={image.id} className="grid">
+                    <img
+                      src={`${import.meta.env.VITE_API_URL}/uploads/${image.path}`}
+                      alt={image.path}
+                      className="w-28 h-28 object-cover rounded-t-sm"
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        form.setValue(
+                          'images',
+                          images.map((p) => (p.id === image.id ? { ...p, deleted: true } : p)),
+                        );
+                      }}
+                      className="rounded-t-none"
+                    >
+                      Eliminar
+                    </Button>
+                  </div>
+                ))}
             </div>
             <Separator />
           </>
