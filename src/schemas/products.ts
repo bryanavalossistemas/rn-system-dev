@@ -11,11 +11,11 @@ export const ProductSchema = z.object({
   description: z.string().nullable(),
   barCode: z.string().nullable(),
   sku: z.string().nullable(),
-  measurementUnit: z.string().nullable(),
-  measurementQuantity: z.number(),
   showInEcommerce: z.boolean(),
   categoryId: z.number().int().nullable(),
   brandId: z.number().int().nullable(),
+  measurementUnitId: z.number().int().nullable(),
+  measurementQuantity: z.number(),
   images: z.array(z.object({ id: z.number().int(), path: z.string() })).optional(),
   createdAt: z.date({ coerce: true }),
 });
@@ -56,6 +56,16 @@ export const ProductFormSchema = z.object({
   }),
   categoryId: z.number().int(),
   brandId: z.number().int(),
+  measurementUnitId: z.number().int(),
+  measurementQuantity: z
+    .string({ coerce: true })
+    .refine((val) => /^-?\d+(\.\d{1,2})?$/.test(val), {
+      message: 'El número debe tener como máximo dos decimales',
+    })
+    .transform(Number)
+    .refine((val) => val >= 0, {
+      message: 'El número debe ser mayor o igual a cero.',
+    }),
   newImages: z.array(z.instanceof(File)),
   images: z.array(
     z.object({
@@ -67,16 +77,6 @@ export const ProductFormSchema = z.object({
   description: z.string(),
   barCode: z.string(),
   sku: z.string(),
-  measurementUnit: z.string(),
-  measurementQuantity: z
-    .string({ coerce: true })
-    .refine((val) => /^-?\d+(\.\d{1,2})?$/.test(val), {
-      message: 'El número debe tener como máximo dos decimales',
-    })
-    .transform(Number)
-    .refine((val) => val >= 0, {
-      message: 'El número debe ser mayor o igual a cero.',
-    }),
   showInEcommerce: z.boolean(),
   ecommercePercentageDiscount: z.number({ coerce: true }).int({ message: 'Deber ser un número entero' }).min(0, {
     message: 'El número debe ser mayor o igual a cero.',

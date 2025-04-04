@@ -11,15 +11,17 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import FormFields from '@/components/admin/dashboard/products/FormFields';
 import { useSearchParams } from 'react-router';
+import { MeasurementUnit } from '@/schemas/measurementUnits';
 
 interface UpdateFormProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
   item: Product;
   categories: Category[];
   brands: Brand[];
+  measurementUnits: MeasurementUnit[];
 }
 
-export default function UpdateForm({ setOpen, item, categories, brands }: UpdateFormProps) {
+export default function UpdateForm({ setOpen, item, categories, brands, measurementUnits }: UpdateFormProps) {
   const {
     id,
     name,
@@ -34,7 +36,7 @@ export default function UpdateForm({ setOpen, item, categories, brands }: Update
     ecommercePercentageDiscount,
     ecommerceSalePrice,
     measurementQuantity,
-    measurementUnit,
+    measurementUnitId,
     showInEcommerce,
     sku,
   } = item;
@@ -48,15 +50,15 @@ export default function UpdateForm({ setOpen, item, categories, brands }: Update
       costPrice: costPrice,
       stock: stock,
       categoryId: categoryId || 0,
+      measurementUnitId: measurementUnitId || 0,
+      measurementQuantity: measurementQuantity,
       brandId: brandId || 0,
       images: images,
       newImages: [],
       barCode: barCode || '',
       description: description || '',
       sku: sku || '',
-      measurementUnit: measurementUnit || '',
       ecommercePercentageDiscount: ecommercePercentageDiscount,
-      measurementQuantity: measurementQuantity,
       showInEcommerce: showInEcommerce,
     },
   });
@@ -86,7 +88,7 @@ export default function UpdateForm({ setOpen, item, categories, brands }: Update
         ecommercePercentageDiscount,
         ecommerceSalePrice,
         measurementQuantity,
-        measurementUnit,
+        measurementUnitId,
         showInEcommerce,
         sku,
       } = formData;
@@ -101,6 +103,8 @@ export default function UpdateForm({ setOpen, item, categories, brands }: Update
         stock: stock,
         categoryId: categoryId ?? null,
         brandId: brandId ?? null,
+        measurementUnitId: measurementUnitId ?? null,
+        measurementQuantity: measurementQuantity,
         images:
           newImages.length > 0
             ? [
@@ -116,8 +120,6 @@ export default function UpdateForm({ setOpen, item, categories, brands }: Update
         description: description,
         ecommercePercentageDiscount: ecommercePercentageDiscount,
         ecommerceSalePrice: ecommerceSalePrice,
-        measurementQuantity: measurementQuantity,
-        measurementUnit: measurementUnit,
         showInEcommerce: showInEcommerce,
         sku: sku,
         isOptimistic: true,
@@ -149,9 +151,9 @@ export default function UpdateForm({ setOpen, item, categories, brands }: Update
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="p-2">
-        <FormFields form={form} categories={categories} brands={brands} />
-        <div className="flex flex-col sm:flex-row-reverse gap-2 mt-2 sm:mt-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-auto">
+        <FormFields form={form} categories={categories} brands={brands} measurementUnits={measurementUnits} />
+        <div className="p-2 flex flex-col sm:flex-row-reverse gap-2 mt-2 sm:mt-4">
           <Button type="submit" disabled={isPending}>
             Guardar
           </Button>

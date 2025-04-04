@@ -38,7 +38,7 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
             <PencilIcon />
           </Button>
         </DialogTrigger>
-        <DialogContent className="w-md max-h-[95svh] overflow-auto">
+        <DialogContent className="w-md max-h-[95svh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Editar Proveedor</DialogTitle>
             <DialogDescription>Actualice los datos del proveedor</DialogDescription>

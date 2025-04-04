@@ -5,7 +5,7 @@ import { isAxiosError } from 'axios';
 
 export const create = async ({ formData: data }: { formData: CustomerForm }) => {
   const { name, documentType, documentNumber, address, phone, email } = data;
-  const formData = {
+  const formData: Omit<Customer, 'createdAt' | 'id'> = {
     name: name,
     documentType: documentType,
     documentNumber: documentNumber,
@@ -38,7 +38,7 @@ export const findAll = async (date?: string | null) => {
 
 export const update = async ({ id, formData: data }: { id: Customer['id']; formData: CustomerForm }) => {
   const { name, documentType, documentNumber, address, phone, email } = data;
-  const formData = {
+  const formData: Omit<Customer, 'createdAt' | 'id'> = {
     name: name,
     documentType: documentType,
     documentNumber: documentNumber,

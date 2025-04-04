@@ -10,22 +10,26 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { Brand } from '@/schemas/brands';
 import { Category } from '@/schemas/categories';
+import { MeasurementUnit } from '@/schemas/measurementUnits';
 import { ProductForm } from '@/schemas/products';
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { UseFormReturn, useWatch } from 'react-hook-form';
 
 interface FormFieldsProps {
   form: UseFormReturn<ProductForm>;
   categories: Category[];
   brands: Brand[];
+  measurementUnits: MeasurementUnit[];
 }
 
-export default function FormFields({ form, categories, brands }: FormFieldsProps) {
+export default function FormFields({ form, categories, brands, measurementUnits }: FormFieldsProps) {
   const [openPopoverCategories, setOpenPopoverCategories] = useState(false);
   const [openPopoverBrands, setOpenPopoverBrands] = useState(false);
+  const [openPopoverMeasurementUnits, setOpenPopoverMeasurementUnits] = useState(false);
   const [openDrawerCategories, setOpenDrawerCategories] = useState(false);
   const [openDrawerBrands, setOpenDrawerBrands] = useState(false);
+  const [openDrawerMeasurementUnits, setOpenDrawerMeasurementUnits] = useState(false);
   const newImages = useWatch({ control: form.control, name: 'newImages' });
   const images = useWatch({ control: form.control, name: 'images' });
 
@@ -49,16 +53,8 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
     }
   };
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.select();
-    }
-  }, []);
-
   return (
-    <div className="grid gap-6">
+    <div className="p-2 grid gap-6 overflow-auto">
       {/* NOMBRE */}
       <FormField
         control={form.control}
@@ -67,7 +63,7 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
           <FormItem>
             <FormLabel>Nombre</FormLabel>
             <FormControl>
-              <Input placeholder="Harina anita x 50kg" type="text" autoComplete="on" autoFocus {...field} ref={inputRef} />
+              <Input placeholder="Harina anita x 50kg" type="text" autoComplete="on" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -199,7 +195,7 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-[398px] p-0">
+                <PopoverContent className="w-[383px] p-0">
                   <Command>
                     <CommandInput placeholder="Buscar categoría..." className="h-9" />
                     <CommandList>
@@ -294,7 +290,7 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-[398px] p-0">
+                <PopoverContent className="w-[383px] p-0">
                   <Command>
                     <CommandInput placeholder="Buscar marca..." className="h-9" />
                     <CommandList>
@@ -323,6 +319,191 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
           )}
         />
       </>
+
+      {/* DESCRIPCION */}
+      <FormField
+        control={form.control}
+        name="description"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Descripción</FormLabel>
+            <FormControl>
+              <Textarea placeholder="Descripción del producto" autoComplete="on" className="resize-none" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* SHOW IN ECOMMERCE */}
+      <FormField
+        control={form.control}
+        name="showInEcommerce"
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+            <FormLabel>¿Mostrar en tienda virtual?</FormLabel>
+            <FormControl>
+              <Switch name="showInEcommerce" checked={field.value} onCheckedChange={field.onChange} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+
+      {/* ECOMMERCE PERCENTAGE DISCCOUNT */}
+      <FormField
+        control={form.control}
+        name="ecommercePercentageDiscount"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Porcentaje de descuento en tienda virtual</FormLabel>
+            <FormControl>
+              <Input placeholder="10" type="number" autoComplete="on" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <>
+        {/* MEASUREMENT UNIT ID MOBILE */}
+        <FormField
+          control={form.control}
+          name="measurementUnitId"
+          render={({ field }) => (
+            <FormItem className="flex flex-col sm:hidden">
+              <FormLabel>Unidad de medida</FormLabel>
+              <Drawer open={openDrawerMeasurementUnits} onOpenChange={setOpenDrawerMeasurementUnits}>
+                <DrawerTrigger asChild>
+                  <FormControl>
+                    <Button variant="outline" role="combobox" className={cn('justify-between', !field.value && 'text-muted-foreground')}>
+                      {field.value ? measurementUnits.find((item) => item.id === field.value)?.name : 'Seleccionar unidad de medida'}
+                      <ChevronsUpDownIcon className="opacity-50" />
+                    </Button>
+                  </FormControl>
+                </DrawerTrigger>
+                <DrawerContent>
+                  <DrawerHeader>
+                    <DrawerTitle>Seleccionar Unidad de Medida</DrawerTitle>
+                    <DrawerDescription>Busque la unidad de medida del producto</DrawerDescription>
+                  </DrawerHeader>
+                  <Command>
+                    <CommandInput placeholder="Buscar unidad de medida..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No se encontró ninguna unidad de medida.</CommandEmpty>
+                      <CommandGroup>
+                        {measurementUnits.map((item) => (
+                          <CommandItem
+                            value={item.name}
+                            key={item.id}
+                            onSelect={() => {
+                              form.setValue('measurementUnitId', item.id);
+                              setOpenDrawerMeasurementUnits(false);
+                            }}
+                          >
+                            {item.name} | {item.prefix}
+                            <CheckIcon className={cn('ml-auto', item.id === field.value ? 'opacity-100' : 'opacity-0')} />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </DrawerContent>
+              </Drawer>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* MEASUREMENT UNIT ID DESKTOP */}
+        <FormField
+          control={form.control}
+          name="measurementUnitId"
+          render={({ field }) => (
+            <FormItem className="hidden sm:flex sm:flex-col">
+              <FormLabel>Unidad de medida</FormLabel>
+              <Popover open={openPopoverMeasurementUnits} onOpenChange={setOpenPopoverMeasurementUnits}>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button variant="outline" role="combobox" className={cn('justify-between', !field.value && 'text-muted-foreground')}>
+                      {field.value ? measurementUnits.find((item) => item.id === field.value)?.name : 'Seleccionar unidad de medida'}
+                      <ChevronsUpDownIcon className="opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-[383px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Buscar unidad de medida..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No se encontró ninguna unidad de medida.</CommandEmpty>
+                      <CommandGroup>
+                        {measurementUnits.map((item) => (
+                          <CommandItem
+                            value={item.name}
+                            key={item.id}
+                            onSelect={() => {
+                              form.setValue('measurementUnitId', item.id);
+                              setOpenPopoverMeasurementUnits(false);
+                            }}
+                          >
+                            {item.name} | {item.prefix}
+                            <CheckIcon className={cn('ml-auto', item.id === field.value ? 'opacity-100' : 'opacity-0')} />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </>
+
+      {/* Measurement Quantity */}
+      <FormField
+        control={form.control}
+        name="measurementQuantity"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Cantidad de medida</FormLabel>
+            <FormControl>
+              <Input placeholder="10" type="number" autoComplete="on" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* BARCODE */}
+      <FormField
+        control={form.control}
+        name="barCode"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Código de barras</FormLabel>
+            <FormControl>
+              <Input placeholder="12341513413" type="text" autoComplete="on" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* SKU */}
+      <FormField
+        control={form.control}
+        name="sku"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Código interno</FormLabel>
+            <FormControl>
+              <Input placeholder="HAR-00001" type="text" autoComplete="on" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
       {/* IMAGES */}
       <div className="grid gap-2">
@@ -369,110 +550,6 @@ export default function FormFields({ form, categories, brands }: FormFieldsProps
           </div>
         )}
       </div>
-
-      {/* DESCRIPCION */}
-      <FormField
-        control={form.control}
-        name="description"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Descripción</FormLabel>
-            <FormControl>
-              <Textarea placeholder="Descripción del producto" autoComplete="on" className="resize-none" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* BARCODE */}
-      <FormField
-        control={form.control}
-        name="barCode"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Código de barras</FormLabel>
-            <FormControl>
-              <Input placeholder="12341513413" type="text" autoComplete="on" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* SKU */}
-      <FormField
-        control={form.control}
-        name="sku"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Código interno</FormLabel>
-            <FormControl>
-              <Input placeholder="HAR-00001" type="text" autoComplete="on" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* Measurement Unit */}
-      <FormField
-        control={form.control}
-        name="measurementUnit"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Unidad de medida</FormLabel>
-            <FormControl>
-              <Input placeholder="kg, caja, unidad" type="text" autoComplete="on" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* Measurement Quantity */}
-      <FormField
-        control={form.control}
-        name="measurementQuantity"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Cantidad de medida</FormLabel>
-            <FormControl>
-              <Input placeholder="10" type="number" autoComplete="on" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* SHOW IN ECOMMERCE */}
-      <FormField
-        control={form.control}
-        name="showInEcommerce"
-        render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-            <FormLabel>¿Mostrar en tienda virtual?</FormLabel>
-            <FormControl>
-              <Switch checked={field.value} onCheckedChange={field.onChange} />
-            </FormControl>
-          </FormItem>
-        )}
-      />
-
-      {/* ECOMMERCE PERCENTAGE DISCCOUNT */}
-      <FormField
-        control={form.control}
-        name="ecommercePercentageDiscount"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Porcentaje de descuento en tienda virtual</FormLabel>
-            <FormControl>
-              <Input placeholder="10" type="number" autoComplete="on" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
     </div>
   );
 }

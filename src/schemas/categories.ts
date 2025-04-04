@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const CategorySchema = z.object({
   id: z.number().int(),
-  name: z.string().min(1, { message: 'El nombre es obligatorio' }),
+  name: z.string(),
   image: z.string().nullable(),
   createdAt: z.date({ coerce: true }),
 });

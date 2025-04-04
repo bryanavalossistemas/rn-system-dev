@@ -1,7 +1,6 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { BrandForm } from '@/schemas/brands';
-import { useEffect, useRef } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 interface FormFieldsProps {
@@ -9,14 +8,6 @@ interface FormFieldsProps {
 }
 
 export default function FormFields({ form }: FormFieldsProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.select();
-    }
-  }, []);
-
   return (
     <div>
       <FormField
@@ -26,7 +17,7 @@ export default function FormFields({ form }: FormFieldsProps) {
           <FormItem>
             <FormLabel>Nombre</FormLabel>
             <FormControl>
-              <Input placeholder="Anita" type="text" autoComplete="on" autoFocus {...field} ref={inputRef} />
+              <Input placeholder="Anita" type="text" autoComplete="on" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>

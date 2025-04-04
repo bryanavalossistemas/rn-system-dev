@@ -21,7 +21,7 @@ export default function FormFields({ form }: FormFieldsProps) {
   const currentDocumentType = useWatch({ control: form.control, name: 'documentType' });
 
   return (
-    <div className="grid gap-6">
+    <div className="p-2 grid gap-6 overflow-auto">
       {/* NOMBRE */}
       <FormField
         control={form.control}

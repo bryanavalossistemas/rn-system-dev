@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCategories } from '@/hooks/useCategories';
 import { useBrands } from '@/hooks/useBrands';
+import { useMeasurementUnits } from '@/hooks/useMeasurementUnits';
 
 interface CreateButtonProps {
   className?: string;
@@ -21,7 +22,9 @@ export default function CreateButton({ className, variant }: CreateButtonProps) 
 
   const { data: brands = [], isLoading: isLoadingBrands } = useBrands();
 
-  if (isLoadingCategories || isLoadingBrands) {
+  const { data: measurementUnits = [], isLoading: isLoadingMeasurementUnits } = useMeasurementUnits();
+
+  if (isLoadingCategories || isLoadingBrands || isLoadingMeasurementUnits) {
     return (
       <>
         <Skeleton className="w-full h-9 sm:hidden" />
@@ -44,7 +47,7 @@ export default function CreateButton({ className, variant }: CreateButtonProps) 
             <DrawerTitle>Nuevo Producto</DrawerTitle>
             <DrawerDescription>Rellene el formulario para crear un producto</DrawerDescription>
           </DrawerHeader>
-          <CreateForm categories={categories} brands={brands} setOpen={setOpenDrawer} />
+          <CreateForm categories={categories} brands={brands} measurementUnits={measurementUnits} setOpen={setOpenDrawer} />
         </DrawerContent>
       </Drawer>
 
@@ -56,12 +59,12 @@ export default function CreateButton({ className, variant }: CreateButtonProps) 
             <PlusIcon strokeWidth={3} />
           </Button>
         </DialogTrigger>
-        <DialogContent className="w-md max-h-[95svh] overflow-auto">
+        <DialogContent className="w-md max-h-[95svh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Nuevo Producto</DialogTitle>
             <DialogDescription>Rellene el formulario para crear un producto</DialogDescription>
           </DialogHeader>
-          <CreateForm setOpen={setOpenDialog} categories={categories} brands={brands} />
+          <CreateForm categories={categories} brands={brands} measurementUnits={measurementUnits} setOpen={setOpenDialog} />
         </DialogContent>
       </Dialog>
     </>

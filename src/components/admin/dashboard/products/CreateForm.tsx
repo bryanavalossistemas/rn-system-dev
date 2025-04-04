@@ -11,14 +11,16 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import FormFields from '@/components/admin/dashboard/products/FormFields';
 import { useSearchParams } from 'react-router';
+import { MeasurementUnit } from '@/schemas/measurementUnits';
 
 interface CreateFormProps {
   categories: Category[];
   brands: Brand[];
+  measurementUnits: MeasurementUnit[];
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function CreateForm({ categories, brands, setOpen }: CreateFormProps) {
+export default function CreateForm({ categories, brands, measurementUnits, setOpen }: CreateFormProps) {
   const form = useForm<ProductForm>({
     resolver: zodResolver(ProductFormSchema),
     defaultValues: {
@@ -28,14 +30,14 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
       costPrice: 0,
       stock: 0,
       categoryId: 0,
+      measurementUnitId: 0,
+      measurementQuantity: 0,
       brandId: 0,
       newImages: [],
       images: [],
       description: '',
       barCode: '',
       sku: '',
-      measurementUnit: '',
-      measurementQuantity: 0,
       showInEcommerce: true,
       ecommercePercentageDiscount: 0,
     },
@@ -59,11 +61,11 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
         stock,
         categoryId,
         brandId,
+        measurementUnitId,
+        measurementQuantity,
         newImages,
         barCode,
         description,
-        measurementQuantity,
-        measurementUnit,
         showInEcommerce,
         sku,
         ecommercePercentageDiscount,
@@ -84,7 +86,7 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
         images: newImages.length > 0 ? [{ id: Date.now(), path: URL.createObjectURL(newImages[newImages.length - 1]) }] : [],
         barCode: barCode,
         description: description,
-        measurementUnit: measurementUnit,
+        measurementUnitId: measurementUnitId ?? null,
         sku: sku,
         measurementQuantity: measurementQuantity,
         ecommercePercentageDiscount: ecommercePercentageDiscount,
@@ -118,9 +120,9 @@ export default function CreateForm({ categories, brands, setOpen }: CreateFormPr
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="p-2 flex flex-col">
-        <FormFields form={form} categories={categories} brands={brands} />
-        <div className="flex flex-col sm:flex-row-reverse gap-2 mt-2 sm:mt-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-auto">
+        <FormFields form={form} categories={categories} brands={brands} measurementUnits={measurementUnits} />
+        <div className="p-2 flex flex-col sm:flex-row-reverse gap-2 mt-2 sm:mt-4">
           <Button type="submit" disabled={isPending}>
             Guardar
           </Button>

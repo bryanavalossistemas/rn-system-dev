@@ -40,7 +40,7 @@ export default function CreateButton({ className, variant }: CreateButtonProps) 
             <PlusIcon strokeWidth={3} />
           </Button>
         </DialogTrigger>
-        <DialogContent className="w-md max-h-[95svh] overflow-auto">
+        <DialogContent className="w-md max-h-[95svh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Nuevo Cliente</DialogTitle>
             <DialogDescription>Rellene el formulario para crear un cliente</DialogDescription>

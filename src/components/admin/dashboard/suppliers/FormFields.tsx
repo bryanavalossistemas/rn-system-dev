@@ -2,7 +2,6 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SupplierForm } from '@/schemas/suppliers';
-import { useEffect, useRef } from 'react';
 import { UseFormReturn, useWatch } from 'react-hook-form';
 
 interface FormFieldsProps {
@@ -10,18 +9,10 @@ interface FormFieldsProps {
 }
 
 export default function FormFields({ form }: FormFieldsProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.select();
-    }
-  }, []);
-
   const currentDocumentType = useWatch({ control: form.control, name: 'documentType' });
 
   return (
-    <div className="grid gap-6">
+    <div className="p-2 grid gap-6 overflow-auto">
       {/* NOMBRE */}
       <FormField
         control={form.control}
@@ -34,9 +25,7 @@ export default function FormFields({ form }: FormFieldsProps) {
                 placeholder={currentDocumentType === 'RUC' ? 'Representaciones Nataly S.A.C' : 'Alicia Loa y Pardo Menacho'}
                 type="text"
                 autoComplete="on"
-                autoFocus
                 {...field}
-                ref={inputRef}
               />
             </FormControl>
             <FormMessage />
@@ -51,7 +40,7 @@ export default function FormFields({ form }: FormFieldsProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>RUC | DNI</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select name="documentType" onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger className="w-full">
                   <SelectValue />

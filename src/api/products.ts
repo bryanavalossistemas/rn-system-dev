@@ -18,7 +18,7 @@ export const create = async ({ formData: data }: { formData: ProductForm }) => {
     ecommercePercentageDiscount,
     ecommerceSalePrice,
     measurementQuantity,
-    measurementUnit,
+    measurementUnitId,
     showInEcommerce,
     sku,
   } = data;
@@ -29,13 +29,13 @@ export const create = async ({ formData: data }: { formData: ProductForm }) => {
   formData.append('description', `${description}`);
   formData.append('ecommercePercentageDiscount', `${ecommercePercentageDiscount}`);
   formData.append('measurementQuantity', `${measurementQuantity}`);
-  formData.append('measurementUnit', `${measurementUnit}`);
   formData.append('showInEcommerce', `${showInEcommerce}`);
   formData.append('sku', `${sku}`);
   formData.append('costPrice', `${costPrice}`);
   formData.append('stock', `${stock}`);
-  if (categoryId) formData.append('categoryId', `${categoryId}`);
-  if (brandId) formData.append('brandId', `${brandId}`);
+  formData.append('measurementUnitId', `${measurementUnitId === 0 ? 'null' : measurementUnitId}`);
+  formData.append('categoryId', `${categoryId === 0 ? 'null' : categoryId}`);
+  formData.append('brandId', `${brandId === 0 ? 'null' : brandId}`);
   if (newImages.length > 0) {
     newImages.forEach((image) => {
       formData.append('images', image);
@@ -80,7 +80,7 @@ export const update = async ({ id, formData: data }: { id: Product['id']; formDa
     description,
     ecommercePercentageDiscount,
     measurementQuantity,
-    measurementUnit,
+    measurementUnitId,
     showInEcommerce,
     sku,
   } = data;
@@ -91,13 +91,13 @@ export const update = async ({ id, formData: data }: { id: Product['id']; formDa
   formData.append('description', `${description}`);
   formData.append('ecommercePercentageDiscount', `${ecommercePercentageDiscount}`);
   formData.append('measurementQuantity', `${measurementQuantity}`);
-  formData.append('measurementUnit', `${measurementUnit}`);
   formData.append('showInEcommerce', `${showInEcommerce}`);
   formData.append('sku', `${sku}`);
   formData.append('costPrice', `${costPrice}`);
   formData.append('stock', `${stock}`);
-  if (categoryId) formData.append('categoryId', `${categoryId}`);
-  if (brandId) formData.append('brandId', `${brandId}`);
+  formData.append('measurementUnitId', `${measurementUnitId === 0 ? 'null' : measurementUnitId}`);
+  formData.append('categoryId', `${categoryId === 0 ? 'null' : categoryId}`);
+  formData.append('brandId', `${brandId === 0 ? 'null' : brandId}`);
   if (images) formData.append('oldImages', JSON.stringify(images));
   if (newImages) {
     newImages.forEach((image) => {

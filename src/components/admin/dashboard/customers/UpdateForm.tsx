@@ -50,9 +50,9 @@ export default function UpdateForm({ setOpen, item }: UpdateFormProps) {
         name: name,
         documentType: documentType,
         documentNumber: documentNumber,
-        address: address || null,
-        phone: phone || null,
-        email: email || null,
+        address: address,
+        phone: phone,
+        email: email,
         isOptimistic: true,
       };
 
@@ -82,9 +82,9 @@ export default function UpdateForm({ setOpen, item }: UpdateFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="p-2 h-96 overflow-auto sm:h-auto">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col overflow-auto">
         <FormFields form={form} />
-        <div className="flex flex-col sm:flex-row-reverse gap-2 mt-2 sm:mt-4">
+        <div className="p-2 flex flex-col sm:flex-row-reverse gap-2 mt-2 sm:mt-4">
           <Button type="submit" disabled={isPending}>
             Guardar
           </Button>

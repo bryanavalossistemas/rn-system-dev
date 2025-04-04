@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCategories } from '@/hooks/useCategories';
 import { useBrands } from '@/hooks/useBrands';
+import { useMeasurementUnits } from '@/hooks/useMeasurementUnits';
 
 interface UpdateButtonProps {
   item: Product;
@@ -21,7 +22,9 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
 
   const { data: brands = [], isLoading: isLoadingBrands } = useBrands();
 
-  if (isLoadingCategories || isLoadingBrands) {
+  const { data: measurementUnits = [], isLoading: isLoadingMeasurementUnits } = useMeasurementUnits();
+
+  if (isLoadingCategories || isLoadingBrands || isLoadingMeasurementUnits) {
     return (
       <>
         <Skeleton className="w-9 h-9 sm:hidden" />
@@ -43,7 +46,7 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
             <DrawerTitle>Editar producto</DrawerTitle>
             <DrawerDescription>Actualiza el formulario para editar el producto</DrawerDescription>
           </DrawerHeader>
-          <UpdateForm setOpen={setOpenDrawer} item={item} categories={categories} brands={brands} />
+          <UpdateForm item={item} categories={categories} brands={brands} measurementUnits={measurementUnits} setOpen={setOpenDrawer} />
         </DrawerContent>
       </Drawer>
 
@@ -54,12 +57,12 @@ export default function UpdateButton({ item }: UpdateButtonProps) {
             <PencilIcon />
           </Button>
         </DialogTrigger>
-        <DialogContent className="w-md max-h-[95svh] overflow-auto">
+        <DialogContent className="w-md max-h-[95svh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Editar producto</DialogTitle>
             <DialogDescription>Actualiza el formulario para editar el producto</DialogDescription>
           </DialogHeader>
-          <UpdateForm setOpen={setOpenDialog} item={item} categories={categories} brands={brands} />
+          <UpdateForm item={item} categories={categories} brands={brands} measurementUnits={measurementUnits} setOpen={setOpenDialog} />
         </DialogContent>
       </Dialog>
     </>
