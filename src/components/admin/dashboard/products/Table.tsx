@@ -71,9 +71,31 @@ export function Table() {
                   <div>Venta: {formatCurrency(row.original.salePrice)}</div>
                 </div>
               </div>
-              <div className="flex gap-2 justify-end">
-                <UpdateButton item={row.original} />
-                <RemoveButton id={row.original.id} />
+              <div className="flex gap-2 justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">Imagen:</span>
+                  <div className="w-20 h-20">
+                    {row.original.images && row.original.images.length > 0 ? (
+                      <img
+                        className="w-full h-full object-cover rounded-sm"
+                        src={`${import.meta.env.VITE_API_URL}/uploads/${row.original.images[0].path}`}
+                        onError={(e) => {
+                          const img = e.target;
+                          if (img instanceof HTMLImageElement) {
+                            img.onerror = null;
+                            img.src = row.original.images && row.original.images.length > 0 ? row.original.images[0].path : '/placeholder.svg';
+                          }
+                        }}
+                      />
+                    ) : (
+                      <img className="w-full h-full object-cover rounded-sm" src="/placeholder.svg" />
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-end gap-2">
+                  <UpdateButton item={row.original} />
+                  <RemoveButton id={row.original.id} />
+                </div>
               </div>
             </Card>
           ))

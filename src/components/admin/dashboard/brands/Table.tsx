@@ -65,9 +65,6 @@ export function Table() {
                   />
                   <span className="font-medium">{row.original.name}</span>
                 </Label>
-                <div>
-                  <div className="text-sm text-gray-600">ID: {row.original.id}</div>
-                </div>
               </div>
               <div className="flex gap-2 justify-end">
                 <UpdateButton item={row.original} />

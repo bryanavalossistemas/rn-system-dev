@@ -31,7 +31,9 @@ export default function RightPanelBody({ saleDetails }: RightPanelBodyProps) {
                 return (
                   <div key={item.id} className="flex items-center gap-3 p-2 border rounded-sm text-sm">
                     <img
-                      src={item.images && item.images.length > 0 ? `${import.meta.env.VITE_API_URL}/${item.images[0]?.path}` : '/placeholder.svg'}
+                      src={
+                        item.images && item.images.length > 0 ? `${import.meta.env.VITE_API_URL}/uploads/${item.images[0].path}` : '/placeholder.svg'
+                      }
                       alt={item.productName}
                       className=" object-cover w-16 h-16 rounded shrink-0 shadow-sm"
                     />

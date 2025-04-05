@@ -46,20 +46,20 @@ export default function UpdateForm({ setOpen, item, categories, brands, measurem
     defaultValues: {
       name: name,
       salePrice: salePrice,
-      ecommerceSalePrice: ecommerceSalePrice,
+      ecommerceSalePrice: ecommerceSalePrice || 0,
       costPrice: costPrice,
       stock: stock,
       categoryId: categoryId || 0,
       measurementUnitId: measurementUnitId || 0,
-      measurementQuantity: measurementQuantity,
       brandId: brandId || 0,
-      images: images ?? [],
+      images: images || [],
       newImages: [],
       barCode: barCode || '',
       description: description || '',
       sku: sku || '',
-      ecommercePercentageDiscount: ecommercePercentageDiscount,
       showInEcommerce: showInEcommerce,
+      measurementQuantity: measurementQuantity || 0,
+      ecommercePercentageDiscount: ecommercePercentageDiscount || 0,
     },
   });
 
@@ -101,10 +101,16 @@ export default function UpdateForm({ setOpen, item, categories, brands, measurem
         salePrice: salePrice,
         costPrice: costPrice,
         stock: stock,
-        categoryId: categoryId ?? null,
-        brandId: brandId ?? null,
-        measurementUnitId: measurementUnitId ?? null,
-        measurementQuantity: measurementQuantity,
+        categoryId: categoryId || null,
+        brandId: brandId || null,
+        measurementUnitId: measurementUnitId || null,
+        measurementQuantity: measurementQuantity || null,
+        barCode: barCode || null,
+        description: description || null,
+        ecommercePercentageDiscount: ecommercePercentageDiscount || null,
+        ecommerceSalePrice: ecommerceSalePrice || null,
+        showInEcommerce: showInEcommerce,
+        sku: sku || null,
         images:
           noDeletedProductImages.length > 0
             ? noDeletedProductImages
@@ -116,12 +122,6 @@ export default function UpdateForm({ setOpen, item, categories, brands, measurem
                   },
                 ]
               : [],
-        barCode: barCode,
-        description: description,
-        ecommercePercentageDiscount: ecommercePercentageDiscount,
-        ecommerceSalePrice: ecommerceSalePrice,
-        showInEcommerce: showInEcommerce,
-        sku: sku,
         isOptimistic: true,
       };
 

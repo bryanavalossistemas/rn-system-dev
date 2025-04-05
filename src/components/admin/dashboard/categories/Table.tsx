@@ -65,13 +65,32 @@ export function Table() {
                   />
                   <span className="font-medium">{row.original.name}</span>
                 </Label>
-                <div>
-                  <div className="text-sm text-gray-600">ID: {row.original.id}</div>
-                </div>
               </div>
-              <div className="flex gap-2 justify-end">
-                <UpdateButton item={row.original} />
-                <RemoveButton id={row.original.id} />
+              <div className="flex gap-2 justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">Imagen:</span>
+                  <div className="w-20 h-20">
+                    {row.original.image ? (
+                      <img
+                        className="w-full h-full object-cover rounded-sm"
+                        src={`${import.meta.env.VITE_API_URL}/uploads/${row.original.image}`}
+                        onError={(e) => {
+                          const img = e.target;
+                          if (img instanceof HTMLImageElement) {
+                            img.onerror = null;
+                            img.src = row.original.image || '/placeholder.svg';
+                          }
+                        }}
+                      />
+                    ) : (
+                      <img className="w-full h-full object-cover rounded-sm" src="/placeholder.svg" />
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-end gap-2">
+                  <UpdateButton item={row.original} />
+                  <RemoveButton id={row.original.id} />
+                </div>
               </div>
             </Card>
           ))

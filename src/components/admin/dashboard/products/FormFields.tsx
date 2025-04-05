@@ -32,6 +32,8 @@ export default function FormFields({ form, categories, brands, measurementUnits 
   const [openDrawerMeasurementUnits, setOpenDrawerMeasurementUnits] = useState(false);
   const newImages = useWatch({ control: form.control, name: 'newImages' });
   const images = useWatch({ control: form.control, name: 'images' });
+  const showInEcommerce = useWatch({ control: form.control, name: 'showInEcommerce' });
+  const measurementUnitId = useWatch({ control: form.control, name: 'measurementUnitId' });
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -70,21 +72,6 @@ export default function FormFields({ form, categories, brands, measurementUnits 
             <FormLabel>Precio de venta</FormLabel>
             <FormControl>
               <Input placeholder="100.00" type="number" autoComplete="on" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* ECOMMERCE SALEPRICE */}
-      <FormField
-        control={form.control}
-        name="ecommerceSalePrice"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Precio de venta en tienda virtual</FormLabel>
-            <FormControl>
-              <Input placeholder="110.00" type="number" autoComplete="on" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -146,6 +133,16 @@ export default function FormFields({ form, categories, brands, measurementUnits 
                     <CommandInput placeholder="Buscar categoría..." className="h-9" />
                     <CommandList>
                       <CommandEmpty>No se encontró ninguna categoría.</CommandEmpty>
+                      <CommandItem
+                        value={'Seleccionar categoría'}
+                        onSelect={() => {
+                          form.setValue('categoryId', 0);
+                          setOpenDrawerCategories(false);
+                        }}
+                      >
+                        Seleccionar categoría
+                        <CheckIcon className={cn('ml-auto', 0 === field.value ? 'opacity-100' : 'opacity-0')} />
+                      </CommandItem>
                       <CommandGroup>
                         {categories.map((category) => (
                           <CommandItem
@@ -192,6 +189,16 @@ export default function FormFields({ form, categories, brands, measurementUnits 
                     <CommandList>
                       <CommandEmpty>No se encontró ninguna categoría.</CommandEmpty>
                       <CommandGroup>
+                        <CommandItem
+                          value={'Seleccionar categoría'}
+                          onSelect={() => {
+                            form.setValue('categoryId', 0);
+                            setOpenPopoverCategories(false);
+                          }}
+                        >
+                          Seleccionar categoría
+                          <CheckIcon className={cn('ml-auto', 0 === field.value ? 'opacity-100' : 'opacity-0')} />
+                        </CommandItem>
                         {categories.map((category) => (
                           <CommandItem
                             value={category.name}
@@ -242,6 +249,16 @@ export default function FormFields({ form, categories, brands, measurementUnits 
                     <CommandList>
                       <CommandEmpty>No se encontró ninguna marca.</CommandEmpty>
                       <CommandGroup>
+                        <CommandItem
+                          value={'Seleccionar marca'}
+                          onSelect={() => {
+                            form.setValue('brandId', 0);
+                            setOpenDrawerBrands(false);
+                          }}
+                        >
+                          Seleccionar marca
+                          <CheckIcon className={cn('ml-auto', 0 === field.value ? 'opacity-100' : 'opacity-0')} />
+                        </CommandItem>
                         {brands.map((brand) => (
                           <CommandItem
                             value={brand.name}
@@ -287,6 +304,16 @@ export default function FormFields({ form, categories, brands, measurementUnits 
                     <CommandList>
                       <CommandEmpty>No se encontró ninguna marca.</CommandEmpty>
                       <CommandGroup>
+                        <CommandItem
+                          value={'Seleccionar marca'}
+                          onSelect={() => {
+                            form.setValue('brandId', 0);
+                            setOpenPopoverBrands(false);
+                          }}
+                        >
+                          Seleccionar marca
+                          <CheckIcon className={cn('ml-auto', 0 === field.value ? 'opacity-100' : 'opacity-0')} />
+                        </CommandItem>
                         {brands.map((brand) => (
                           <CommandItem
                             value={brand.name}
@@ -326,35 +353,6 @@ export default function FormFields({ form, categories, brands, measurementUnits 
         )}
       />
 
-      {/* SHOW IN ECOMMERCE */}
-      <FormField
-        control={form.control}
-        name="showInEcommerce"
-        render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-            <FormLabel>¿Mostrar en tienda virtual?</FormLabel>
-            <FormControl>
-              <Switch name="showInEcommerce" checked={field.value} onCheckedChange={field.onChange} />
-            </FormControl>
-          </FormItem>
-        )}
-      />
-
-      {/* ECOMMERCE PERCENTAGE DISCCOUNT */}
-      <FormField
-        control={form.control}
-        name="ecommercePercentageDiscount"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Porcentaje de descuento en tienda virtual</FormLabel>
-            <FormControl>
-              <Input placeholder="10" type="number" autoComplete="on" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
       <>
         {/* MEASUREMENT UNIT ID MOBILE */}
         <FormField
@@ -382,6 +380,17 @@ export default function FormFields({ form, categories, brands, measurementUnits 
                     <CommandList>
                       <CommandEmpty>No se encontró ninguna unidad de medida.</CommandEmpty>
                       <CommandGroup>
+                        <CommandItem
+                          value={'Seleccionar unidad de medida'}
+                          onSelect={() => {
+                            form.setValue('measurementUnitId', 0);
+                            form.setValue('measurementQuantity', 0);
+                            setOpenDrawerMeasurementUnits(false);
+                          }}
+                        >
+                          Seleccionar unidad de medida
+                          <CheckIcon className={cn('ml-auto', 0 === field.value ? 'opacity-100' : 'opacity-0')} />
+                        </CommandItem>
                         {measurementUnits.map((item) => (
                           <CommandItem
                             value={item.name}
@@ -427,6 +436,17 @@ export default function FormFields({ form, categories, brands, measurementUnits 
                     <CommandList>
                       <CommandEmpty>No se encontró ninguna unidad de medida.</CommandEmpty>
                       <CommandGroup>
+                        <CommandItem
+                          value={'Seleccionar unidad de medida'}
+                          onSelect={() => {
+                            form.setValue('measurementUnitId', 0);
+                            form.setValue('measurementQuantity', 0);
+                            setOpenPopoverMeasurementUnits(false);
+                          }}
+                        >
+                          Seleccionar unidad de medida
+                          <CheckIcon className={cn('ml-auto', 0 === field.value ? 'opacity-100' : 'opacity-0')} />
+                        </CommandItem>
                         {measurementUnits.map((item) => (
                           <CommandItem
                             value={item.name}
@@ -452,19 +472,21 @@ export default function FormFields({ form, categories, brands, measurementUnits 
       </>
 
       {/* Measurement Quantity */}
-      <FormField
-        control={form.control}
-        name="measurementQuantity"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Cantidad de medida</FormLabel>
-            <FormControl>
-              <Input placeholder="10" type="number" autoComplete="on" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      {measurementUnitId !== 0 && (
+        <FormField
+          control={form.control}
+          name="measurementQuantity"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Cantidad de medida</FormLabel>
+              <FormControl>
+                <Input placeholder="10" type="number" autoComplete="on" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
 
       {/* BARCODE */}
       <FormField
@@ -549,6 +571,64 @@ export default function FormFields({ form, categories, brands, measurementUnits 
           </div>
         )}
       </div>
+
+      {/* SHOW IN ECOMMERCE */}
+      <FormField
+        control={form.control}
+        name="showInEcommerce"
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+            <FormLabel>¿Mostrar en tienda virtual?</FormLabel>
+            <FormControl>
+              <Switch
+                name="showInEcommerce"
+                checked={field.value}
+                onCheckedChange={(value) => {
+                  if (value === false) {
+                    form.setValue('ecommerceSalePrice', 0);
+                    form.setValue('ecommercePercentageDiscount', 0);
+                  }
+                  field.onChange(value);
+                }}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+
+      {/* ECOMMERCE SALEPRICE */}
+      {showInEcommerce && (
+        <FormField
+          control={form.control}
+          name="ecommerceSalePrice"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Precio de venta en tienda virtual</FormLabel>
+              <FormControl>
+                <Input placeholder="110.00" type="number" autoComplete="on" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
+
+      {/* ECOMMERCE PERCENTAGE DISCCOUNT */}
+      {showInEcommerce && (
+        <FormField
+          control={form.control}
+          name="ecommercePercentageDiscount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Porcentaje de descuento en tienda virtual</FormLabel>
+              <FormControl>
+                <Input placeholder="10" type="number" autoComplete="on" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
     </div>
   );
 }

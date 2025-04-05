@@ -59,7 +59,11 @@ export default function LeftPanelProducts() {
               }}
             >
               <img
-                src={product.images && product.images.length > 0 ? `${import.meta.env.VITE_API_URL}/${product.images[0]?.path}` : '/placeholder.svg'}
+                src={
+                  product.images && product.images.length > 0
+                    ? `${import.meta.env.VITE_API_URL}/uploads/${product.images[0]?.path}`
+                    : '/placeholder.svg'
+                }
                 alt={product.name}
                 className="object-cover h-50 w-full"
               />

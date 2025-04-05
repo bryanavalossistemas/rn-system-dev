@@ -24,21 +24,21 @@ export const create = async ({ formData: data }: { formData: ProductForm }) => {
   } = data;
   formData.append('name', name);
   formData.append('salePrice', `${salePrice}`);
-  formData.append('ecommerceSalePrice', `${ecommerceSalePrice}`);
-  formData.append('barCode', `${barCode || 'null'}`);
-  formData.append('description', `${description || 'null'}`);
-  formData.append('sku', `${sku || 'null'}`);
-  formData.append('ecommercePercentageDiscount', `${ecommercePercentageDiscount}`);
-  formData.append('measurementQuantity', `${measurementQuantity}`);
-  formData.append('showInEcommerce', `${showInEcommerce}`);
   formData.append('costPrice', `${costPrice}`);
   formData.append('stock', `${stock}`);
-  formData.append('measurementUnitId', `${measurementUnitId === 0 ? 'null' : measurementUnitId}`);
-  formData.append('categoryId', `${categoryId === 0 ? 'null' : categoryId}`);
-  formData.append('brandId', `${brandId === 0 ? 'null' : brandId}`);
+  formData.append('description', `${description || null}`);
+  formData.append('categoryId', `${categoryId || null}`);
+  formData.append('brandId', `${brandId || null}`);
+  formData.append('measurementUnitId', `${measurementUnitId || null}`);
+  formData.append('measurementQuantity', `${measurementQuantity || null}`);
+  formData.append('barCode', `${barCode || null}`);
+  formData.append('sku', `${sku || null}`);
   newImages.forEach((newImage) => {
     formData.append('newImages', newImage);
   });
+  formData.append('showInEcommerce', `${showInEcommerce}`);
+  formData.append('ecommerceSalePrice', `${ecommerceSalePrice || null}`);
+  formData.append('ecommercePercentageDiscount', `${ecommercePercentageDiscount || null}`);
 
   try {
     return ProductSchema.parse((await api.post('/products', formData)).data);
@@ -84,22 +84,22 @@ export const update = async ({ id, formData: data }: { id: Product['id']; formDa
   } = data;
   formData.append('name', name);
   formData.append('salePrice', `${salePrice}`);
-  formData.append('ecommerceSalePrice', `${ecommerceSalePrice}`);
-  formData.append('barCode', `${barCode}`);
-  formData.append('description', `${description}`);
-  formData.append('ecommercePercentageDiscount', `${ecommercePercentageDiscount}`);
-  formData.append('measurementQuantity', `${measurementQuantity}`);
-  formData.append('showInEcommerce', `${showInEcommerce}`);
-  formData.append('sku', `${sku}`);
   formData.append('costPrice', `${costPrice}`);
   formData.append('stock', `${stock}`);
-  formData.append('measurementUnitId', `${measurementUnitId === 0 ? 'null' : measurementUnitId}`);
-  formData.append('categoryId', `${categoryId === 0 ? 'null' : categoryId}`);
-  formData.append('brandId', `${brandId === 0 ? 'null' : brandId}`);
+  formData.append('description', `${description || null}`);
+  formData.append('categoryId', `${categoryId || null}`);
+  formData.append('brandId', `${brandId || null}`);
+  formData.append('barCode', `${barCode || null}`);
+  formData.append('sku', `${sku || null}`);
+  formData.append('measurementUnitId', `${measurementUnitId || null}`);
+  formData.append('measurementQuantity', `${measurementQuantity || null}`);
   if (images.length > 0) formData.append('images', JSON.stringify(images));
   newImages.forEach((newImage) => {
     formData.append('newImages', newImage);
   });
+  formData.append('showInEcommerce', `${showInEcommerce}`);
+  formData.append('ecommerceSalePrice', `${ecommerceSalePrice || null}`);
+  formData.append('ecommercePercentageDiscount', `${ecommercePercentageDiscount || null}`);
 
   try {
     return ProductSchema.parse((await api.patch(`/products/${id}`, formData)).data);

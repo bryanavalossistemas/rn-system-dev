@@ -54,7 +54,7 @@ export default function RightPanelFooter({ customers, saleDetails }: RightPanelF
         <span>{formatCurrency(subtotal)}</span>
       </div>
       <div className="flex justify-between mb-2">
-        <span className="text-gray-600">Tax (18%)</span>
+        <span className="text-gray-600">IGV (18%)</span>
         <span>{formatCurrency(tax)}</span>
       </div>
       <div className="flex justify-between mb-3">
