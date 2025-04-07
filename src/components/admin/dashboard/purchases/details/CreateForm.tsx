@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { PurchaseDetailForm, PurchaseDetailFormSchema, PurchaseForm } from '@/schemas/purchases';
+import { PurchaseForm, VoucherDetailForm, VoucherDetailFormSchema } from '@/schemas/purchases';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dispatch, SetStateAction } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
@@ -14,8 +14,8 @@ interface CreateFormProps {
 }
 
 export default function CreateForm({ purchaseForm, setOpen, products }: CreateFormProps) {
-  const form = useForm<PurchaseDetailForm>({
-    resolver: zodResolver(PurchaseDetailFormSchema),
+  const form = useForm<VoucherDetailForm>({
+    resolver: zodResolver(VoucherDetailFormSchema),
     defaultValues: {
       id: Date.now(),
       productId: 0,
@@ -26,15 +26,15 @@ export default function CreateForm({ purchaseForm, setOpen, products }: CreateFo
     },
   });
 
-  const onSubmit = (formData: PurchaseDetailForm) => {
-    const oldDetails = purchaseForm.getValues('purchaseDetails');
-    purchaseForm.setValue('purchaseDetails', [
+  const onSubmit = (formData: VoucherDetailForm) => {
+    const oldDetails = purchaseForm.getValues('voucherDetails');
+    purchaseForm.setValue('voucherDetails', [
       {
         id: formData.id,
-        productName: formData.productName,
-        quantity: formData.quantity,
-        unitPrice: formData.unitPrice,
+        product: { name: formData.productName },
         productId: formData.productId,
+        unitPrice: formData.unitPrice,
+        quantity: formData.quantity,
         created: formData.created,
       },
       ...oldDetails,

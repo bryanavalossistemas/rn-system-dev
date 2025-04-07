@@ -5,44 +5,44 @@ import { Dispatch, SetStateAction } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { Product } from '@/schemas/products';
 import FormFields from '@/components/admin/dashboard/purchases/details/FormFields';
-import { PurchaseDetailForm, PurchaseDetailFormSchema, PurchaseForm } from '@/schemas/purchases';
+import { PurchaseForm, VoucherDetail, VoucherDetailForm, VoucherDetailFormSchema } from '@/schemas/purchases';
 
 interface UpdateFormProps {
   purchaseForm: UseFormReturn<PurchaseForm>;
   setOpen: Dispatch<SetStateAction<boolean>>;
   products: Product[];
-  item: PurchaseDetailForm;
+  item: VoucherDetail;
 }
 
 export default function UpdateForm({ purchaseForm, setOpen, products, item }: UpdateFormProps) {
-  const { id, productName, quantity, unitPrice, created, productId } = item;
-  const form = useForm<PurchaseDetailForm>({
-    resolver: zodResolver(PurchaseDetailFormSchema),
+  const { id, product, quantity, unitPrice, created, productId } = item;
+  const form = useForm<VoucherDetailForm>({
+    resolver: zodResolver(VoucherDetailFormSchema),
     defaultValues: {
       id: id,
       productId: productId,
-      productName: productName,
+      productName: product.name,
       quantity: quantity,
       unitPrice: unitPrice,
       created: created,
     },
   });
 
-  const onSubmit = (formData: PurchaseDetailForm) => {
-    const details = purchaseForm.getValues('purchaseDetails');
+  const onSubmit = (formData: VoucherDetailForm) => {
+    const details = purchaseForm.getValues('voucherDetails');
     const newDetails = details.map((d) =>
       d.id === id
         ? {
             id: formData.id,
-            productId: d.productId,
-            productName: formData.productName,
+            productId: formData.productId,
+            product: { name: formData.productName },
             quantity: formData.quantity,
             unitPrice: formData.unitPrice,
             created: formData.created,
           }
         : d,
     );
-    purchaseForm.setValue('purchaseDetails', newDetails);
+    purchaseForm.setValue('voucherDetails', newDetails);
     setOpen(false);
   };
 

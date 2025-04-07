@@ -1,17 +1,17 @@
 import api from '@/config/axios';
 import { getDateRange } from '@/lib/utils';
-import { PurchaseForm, Purchase, PurchaseSchema, PurchasesSchema } from '@/schemas/purchases';
+import { Purchase, PurchaseForm, PurchaseSchema, PurchasesSchema } from '@/schemas/purchases';
 import { isAxiosError } from 'axios';
 
 export const create = async ({ formData: data }: { formData: PurchaseForm }) => {
-  const { documentType, supplierId, purchaseDetails } = data;
+  const { documentType, supplierId, voucherDetails } = data;
   const formData = {
     documentType: documentType,
     supplierId: supplierId,
-    purchaseDetails: purchaseDetails.map((d) => {
+    voucherDetails: voucherDetails.map((d) => {
       return {
         productId: d.productId,
-        productName: d.productName,
+        productName: d.product.name,
         quantity: d.quantity,
         unitPrice: d.unitPrice,
       };
@@ -41,15 +41,15 @@ export const findAll = async (date?: string | null) => {
 };
 
 export const update = async ({ id, formData: data }: { id: Purchase['id']; formData: PurchaseForm }) => {
-  const { documentType, supplierId, purchaseDetails } = data;
+  const { documentType, supplierId, voucherDetails } = data;
   const formData = {
     documentType: documentType,
     supplierId: supplierId,
-    purchaseDetails: purchaseDetails.map((d) => {
+    voucherDetails: voucherDetails.map((d) => {
       return {
         id: d.created ? undefined : d.id,
         productId: d.productId,
-        productName: d.productName,
+        productName: d.product.name,
         quantity: d.quantity,
         unitPrice: d.unitPrice,
         deleted: d.deleted,

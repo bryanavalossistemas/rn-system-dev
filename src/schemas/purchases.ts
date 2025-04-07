@@ -1,43 +1,44 @@
-import { ProductSchema } from '@/schemas/products';
-import { SupplierSchema } from '@/schemas/suppliers';
 import { z } from 'zod';
 
-const PurchaseDetailBaseSchema = z.object({
+export const PurchaseSchema = z.object({
   id: z.number().int(),
-  productName: z.string(),
-  quantity: z.number().int(),
-  unitPrice: z.number(),
-  productId: z.number().int(),
-  product: ProductSchema.optional(),
-  purchaseId: z.number().int(),
-  createdAt: z.date({ coerce: true }),
-});
-export const PurchaseDetailSchema = PurchaseDetailBaseSchema.extend({
-  purchase: z.lazy(() => PurchaseBaseSchema.optional()),
-});
-export type PurchaseDetail = z.infer<typeof PurchaseDetailSchema>;
-
-const PurchaseBaseSchema = z.object({
-  id: z.number().int(),
-  documentType: z.enum(['Factura', 'Boleta']),
-  documentNumber: z.string(),
-  supplierName: z.string(),
-  supplierDocumentNumber: z.string(),
-  subtotal: z.number(),
-  tax: z.number(),
-  total: z.number(),
   supplierId: z.number().int(),
-  supplier: SupplierSchema.optional(),
+  supplier: z.object({ name: z.string() }),
+  voucher: z.object({
+    serie: z.string(),
+    number: z.string(),
+    documentType: z.enum(['Factura', 'Boleta']),
+    total: z.number(),
+    subtotal: z.number(),
+    tax: z.number(),
+    voucherDetails: z.array(
+      z.object({
+        id: z.number(),
+        quantity: z.number(),
+        unitPrice: z.number(),
+        product: z.object({
+          name: z.string(),
+        }),
+      }),
+    ),
+  }),
   createdAt: z.date({ coerce: true }),
 });
-
-export const PurchaseSchema = PurchaseBaseSchema.extend({
-  purchaseDetails: z.lazy(() => z.array(PurchaseDetailBaseSchema)),
-});
-export const PurchasesSchema = z.array(PurchaseSchema);
 export type Purchase = z.infer<typeof PurchaseSchema>;
+export const PurchasesSchema = z.array(PurchaseSchema);
 
-export const PurchaseDetailFormSchema = z.object({
+export const VoucherDetailSchema = z.object({
+  id: z.number(),
+  productId: z.number(),
+  quantity: z.number(),
+  unitPrice: z.number(),
+  deleted: z.boolean().optional(),
+  created: z.boolean().optional(),
+  product: z.object({ name: z.string() }),
+});
+export type VoucherDetail = z.infer<typeof VoucherDetailSchema>;
+
+export const VoucherDetailFormSchema = z.object({
   id: z.number().int(),
   productId: z.number().int().min(1, { message: 'Debe seleccionar un producto' }),
   productName: z.string().min(1, { message: 'El nombre es obligatorio' }),
@@ -54,20 +55,32 @@ export const PurchaseDetailFormSchema = z.object({
   created: z.boolean().optional(),
   deleted: z.boolean().optional(),
 });
-export type PurchaseDetailForm = z.infer<typeof PurchaseDetailFormSchema>;
+export type VoucherDetailForm = z.infer<typeof VoucherDetailFormSchema>;
 
 export const PurchaseFormSchema = z.object({
   supplierId: z.number().int().min(1, { message: 'Seleccionar proveedor' }),
   documentType: z.enum(['Factura', 'Boleta']),
-  purchaseDetails: z.array(PurchaseDetailFormSchema).refine(
-    (value) => {
-      if (value.length > 0 && value.some((v) => v.deleted === undefined)) {
-        return true;
-      }
+  voucherDetails: z
+    .array(
+      z.object({
+        id: z.number(),
+        productId: z.number(),
+        quantity: z.number(),
+        unitPrice: z.number(),
+        deleted: z.boolean().optional(),
+        created: z.boolean().optional(),
+        product: z.object({ name: z.string() }),
+      }),
+    )
+    .refine(
+      (value) => {
+        if (value.length > 0 && value.some((v) => v.deleted === undefined)) {
+          return true;
+        }
 
-      return false;
-    },
-    { message: 'Mínimo un detalle' },
-  ),
+        return false;
+      },
+      { message: 'Mínimo un detalle' },
+    ),
 });
 export type PurchaseForm = z.infer<typeof PurchaseFormSchema>;

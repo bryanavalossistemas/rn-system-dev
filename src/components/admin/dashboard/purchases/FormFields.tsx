@@ -168,7 +168,7 @@ export default function FormFields({ form, suppliers }: FormFieldsProps) {
       <div className="flex-1 mt-4">
         <FormField
           control={form.control}
-          name="purchaseDetails"
+          name="voucherDetails"
           render={({ field }) => (
             <FormItem>
               <Table>
@@ -194,12 +194,12 @@ export default function FormFields({ form, suppliers }: FormFieldsProps) {
                               onClick={() => {
                                 if (detail.created) {
                                   form.setValue(
-                                    'purchaseDetails',
+                                    'voucherDetails',
                                     field.value.filter((p) => p.id !== detail.id),
                                   );
                                 } else {
                                   form.setValue(
-                                    'purchaseDetails',
+                                    'voucherDetails',
                                     field.value.map((p) => (p.id === detail.id ? { ...p, deleted: true } : p)),
                                   );
                                 }
@@ -208,7 +208,7 @@ export default function FormFields({ form, suppliers }: FormFieldsProps) {
                             <UpdateButton purchaseForm={form} item={detail} />
                           </div>
                         </TableCell>
-                        <TableCell className="truncate max-w-[460px]">{detail.productName}</TableCell>
+                        <TableCell className="truncate max-w-[460px]">{detail.product.name}</TableCell>
                         <TableCell className="text-center">{detail.quantity}</TableCell>
                         <TableCell className="text-right">{formatCurrency(detail.unitPrice)}</TableCell>
                         <TableCell className="text-right">{formatCurrency(detail.unitPrice * detail.quantity)}</TableCell>

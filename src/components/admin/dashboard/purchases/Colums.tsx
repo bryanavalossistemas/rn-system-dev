@@ -22,10 +22,30 @@ export const columns = [
     enableHiding: false,
   }),
 
-  columnHelper.accessor('documentNumber', {
+  columnHelper.accessor('voucher.documentType', {
     header: ({ column }) => (
       <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-        <span>N° Documento</span>
+        <span>Tipo de Comprobante</span>
+        <ArrowUpDownIcon className="size-4" />
+      </div>
+    ),
+    cell: (info) => info.getValue(),
+  }),
+
+  columnHelper.accessor('voucher.serie', {
+    header: ({ column }) => (
+      <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <span>Serie</span>
+        <ArrowUpDownIcon className="size-4" />
+      </div>
+    ),
+    cell: (info) => info.getValue(),
+  }),
+
+  columnHelper.accessor('voucher.number', {
+    header: ({ column }) => (
+      <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <span>Número</span>
         <ArrowUpDownIcon className="size-4" />
       </div>
     ),
@@ -42,7 +62,7 @@ export const columns = [
     cell: (info) => formatDate(new Date(info.getValue())),
   }),
 
-  columnHelper.accessor('supplierName', {
+  columnHelper.accessor('supplier.name', {
     header: ({ column }) => (
       <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
         <span>Proveedor</span>
@@ -52,7 +72,7 @@ export const columns = [
     cell: (info) => <div className="whitespace-normal">{info.getValue()}</div>,
   }),
 
-  columnHelper.accessor('total', {
+  columnHelper.accessor('voucher.total', {
     header: ({ column }) => (
       <div className="flex justify-end">
         <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>

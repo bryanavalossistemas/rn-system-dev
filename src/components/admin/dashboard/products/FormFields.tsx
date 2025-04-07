@@ -78,35 +78,6 @@ export default function FormFields({ form, categories, brands, measurementUnits 
         )}
       />
 
-      {/* COST PRICE */}
-      <FormField
-        control={form.control}
-        name="costPrice"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Precio de costo</FormLabel>
-            <FormControl>
-              <Input placeholder="100.00" type="number" autoComplete="on" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* STOCK */}
-      <FormField
-        control={form.control}
-        name="stock"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Stock</FormLabel>
-            <FormControl>
-              <Input placeholder="10" type="number" autoComplete="on" step={1} {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
       <>
         {/* CATEGORY ID MOBILE */}
         <FormField

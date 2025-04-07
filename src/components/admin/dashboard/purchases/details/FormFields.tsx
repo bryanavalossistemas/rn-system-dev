@@ -9,10 +9,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { PurchaseDetailForm } from '@/schemas/purchases';
+import { VoucherDetailForm } from '@/schemas/purchases';
 
 interface FormFieldsProps {
-  form: UseFormReturn<PurchaseDetailForm>;
+  form: UseFormReturn<VoucherDetailForm>;
   products: Product[];
 }
 

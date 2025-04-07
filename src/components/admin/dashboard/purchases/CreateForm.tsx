@@ -22,7 +22,7 @@ export default function CreateForm({ setOpen, suppliers }: CreateFormProps) {
     defaultValues: {
       documentType: 'Factura',
       supplierId: 0,
-      purchaseDetails: [],
+      voucherDetails: [],
     },
   });
 
@@ -33,12 +33,12 @@ export default function CreateForm({ setOpen, suppliers }: CreateFormProps) {
   const { mutate, isPending } = useMutation({
     mutationFn: create,
     onMutate: async ({ formData }) => {
-      const { supplierId, documentType, purchaseDetails } = formData;
+      const { supplierId, documentType, voucherDetails } = formData;
       await queryClient.cancelQueries({ queryKey: date === null ? ['purchases'] : ['purchases', date] });
 
       const previousItems = queryClient.getQueryData(date === null ? ['purchases'] : ['purchases', date]);
 
-      const total = purchaseDetails.reduce((total, d) => total + d.unitPrice * d.quantity, 0);
+      const total = voucherDetails.reduce((total, d) => total + d.unitPrice * d.quantity, 0);
       const subtotal = total / 1.18;
       const tax = subtotal * 0.18;
 
@@ -46,26 +46,19 @@ export default function CreateForm({ setOpen, suppliers }: CreateFormProps) {
         isOptimistic?: boolean;
       } = {
         id: Date.now(),
-        documentType: documentType,
-        supplierName: suppliers.find((s) => s.id === supplierId)?.name ?? '',
-        supplierDocumentNumber: suppliers.find((s) => s.id === supplierId)?.documentNumber ?? '',
-        supplier: suppliers.find((s) => s.id === supplierId),
-        purchaseDetails: purchaseDetails.map((d) => {
-          return {
-            id: d.id,
-            productName: d.productName,
-            quantity: d.quantity,
-            unitPrice: d.unitPrice,
-            productId: d.productId,
-            createdAt: new Date(),
-            purchaseId: Date.now(),
-          };
-        }),
-        total: total,
-        subtotal: subtotal,
-        tax: tax,
+        supplier: { name: suppliers.find((s) => s.id === supplierId)?.name || '' },
         supplierId: supplierId,
-        documentNumber: documentType === 'Factura' ? 'F001 - ' : 'B001 - ',
+        voucher: {
+          documentType: documentType,
+          serie: '',
+          number: '',
+          total: total,
+          subtotal: subtotal,
+          tax: tax,
+          voucherDetails: voucherDetails.map((v) => {
+            return { id: Date.now(), quantity: v.quantity, unitPrice: v.unitPrice, product: v.product };
+          }),
+        },
         createdAt: new Date(),
         isOptimistic: true,
       };

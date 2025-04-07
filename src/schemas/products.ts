@@ -4,7 +4,6 @@ export const ProductSchema = z.object({
   id: z.number().int(),
   name: z.string(),
   salePrice: z.number(),
-  costPrice: z.number(),
   stock: z.number().int(),
   description: z.string().nullable(),
   categoryId: z.number().int().nullable(),
@@ -13,7 +12,7 @@ export const ProductSchema = z.object({
   measurementQuantity: z.number().nullable(),
   barCode: z.string().nullable(),
   sku: z.string().nullable(),
-  images: z.array(z.object({ id: z.number().int(), path: z.string() })).optional(),
+  images: z.array(z.object({ id: z.number().int(), path: z.string() })),
   showInEcommerce: z.boolean(),
   ecommerceSalePrice: z.number().nullable(),
   ecommercePercentageDiscount: z.number().int().nullable(),
@@ -32,17 +31,6 @@ export const ProductFormSchema = z.object({
     .refine((val) => val >= 0, {
       message: 'El número debe ser mayor o igual a cero.',
     }),
-  costPrice: z
-    .number({ coerce: true })
-    .refine((val) => /^-?\d+(\.\d{1,2})?$/.test(val.toString()), {
-      message: 'El número debe tener como máximo dos decimales',
-    })
-    .refine((val) => val >= 0, {
-      message: 'El número debe ser mayor o igual a cero.',
-    }),
-  stock: z.number({ coerce: true }).int({ message: 'Deber ser un número entero' }).min(0, {
-    message: 'El número debe ser mayor o igual a cero.',
-  }),
   description: z.string(),
   categoryId: z.number().int(),
   brandId: z.number().int(),

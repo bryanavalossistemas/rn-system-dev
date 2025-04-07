@@ -8,8 +8,6 @@ export const create = async ({ formData: data }: { formData: ProductForm }) => {
   const {
     name,
     salePrice,
-    costPrice,
-    stock,
     categoryId,
     brandId,
     newImages,
@@ -24,8 +22,6 @@ export const create = async ({ formData: data }: { formData: ProductForm }) => {
   } = data;
   formData.append('name', name);
   formData.append('salePrice', `${salePrice}`);
-  formData.append('costPrice', `${costPrice}`);
-  formData.append('stock', `${stock}`);
   formData.append('description', `${description || null}`);
   formData.append('categoryId', `${categoryId || null}`);
   formData.append('brandId', `${brandId || null}`);
@@ -67,8 +63,6 @@ export const update = async ({ id, formData: data }: { id: Product['id']; formDa
   const {
     name,
     salePrice,
-    costPrice,
-    stock,
     categoryId,
     brandId,
     images,
@@ -84,8 +78,6 @@ export const update = async ({ id, formData: data }: { id: Product['id']; formDa
   } = data;
   formData.append('name', name);
   formData.append('salePrice', `${salePrice}`);
-  formData.append('costPrice', `${costPrice}`);
-  formData.append('stock', `${stock}`);
   formData.append('description', `${description || null}`);
   formData.append('categoryId', `${categoryId || null}`);
   formData.append('brandId', `${brandId || null}`);

@@ -67,7 +67,6 @@ export function Table() {
                 </div>
                 <div className="text-gray-600 flex flex-col gap-0.5">
                   <div>Stock: {row.original.stock}</div>
-                  <div>Costo: {formatCurrency(row.original.costPrice)}</div>
                   <div>Venta: {formatCurrency(row.original.salePrice)}</div>
                 </div>
               </div>
@@ -75,7 +74,7 @@ export function Table() {
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-gray-600">Imagen:</span>
                   <div className="w-20 h-20">
-                    {row.original.images && row.original.images.length > 0 ? (
+                    {row.original.images.length > 0 ? (
                       <img
                         className="w-full h-full object-cover rounded-sm"
                         src={`${import.meta.env.VITE_API_URL}/uploads/${row.original.images[0].path}`}
@@ -83,7 +82,7 @@ export function Table() {
                           const img = e.target;
                           if (img instanceof HTMLImageElement) {
                             img.onerror = null;
-                            img.src = row.original.images && row.original.images.length > 0 ? row.original.images[0].path : '/placeholder.svg';
+                            img.src = row.original.images.length > 0 ? row.original.images[0].path : '/placeholder.svg';
                           }
                         }}
                       />

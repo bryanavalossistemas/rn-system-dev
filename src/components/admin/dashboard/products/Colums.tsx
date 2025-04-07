@@ -31,7 +31,7 @@ export const columns = [
     ),
     cell: (info) => {
       const images = info.getValue();
-      if (images && images.length > 0) {
+      if (images.length > 0) {
         return (
           <div className="flex justify-center">
             <div className="w-20 h-20">
@@ -82,18 +82,6 @@ export const columns = [
       </div>
     ),
     cell: (info) => <div className="flex justify-center">{info.getValue()}</div>,
-  }),
-
-  columnHelper.accessor('costPrice', {
-    header: ({ column }) => (
-      <div className="flex justify-end">
-        <div className="flex items-center gap-1 cursor-pointer w-fit" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-          <span>Costo</span>
-          <ArrowUpDownIcon className="size-4" />
-        </div>
-      </div>
-    ),
-    cell: (info) => <div className="flex justify-end">{formatCurrency(info.getValue())}</div>,
   }),
 
   columnHelper.accessor('salePrice', {

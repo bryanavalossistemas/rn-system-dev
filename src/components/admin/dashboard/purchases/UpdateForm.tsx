@@ -1,7 +1,6 @@
 import { update } from '@/api/purchases';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { Purchase, PurchaseForm, PurchaseFormSchema } from '@/schemas/purchases';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dispatch, SetStateAction } from 'react';
@@ -10,6 +9,7 @@ import { toast } from 'sonner';
 import { Supplier } from '@/schemas/suppliers';
 import { useSearchParams } from 'react-router';
 import FormFields from '@/components/admin/dashboard/purchases/FormFields';
+import { Purchase, PurchaseForm, PurchaseFormSchema } from '@/schemas/purchases';
 
 interface UpdateFormProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -18,20 +18,19 @@ interface UpdateFormProps {
 }
 
 export default function UpdateForm({ setOpen, item, suppliers }: UpdateFormProps) {
-  const { id, createdAt, documentType, supplierId, purchaseDetails, documentNumber } = item;
+  const { id, createdAt, supplierId, voucher } = item;
 
   const form = useForm<PurchaseForm>({
     resolver: zodResolver(PurchaseFormSchema),
     defaultValues: {
-      documentType: documentType,
+      documentType: voucher.documentType,
       supplierId: supplierId,
-      purchaseDetails: purchaseDetails.map((d) => {
+      voucherDetails: voucher.voucherDetails.map((d) => {
         return {
           id: d.id,
-          productId: d.productId,
-          productName: d.productName,
-          quantity: d.quantity,
           unitPrice: d.unitPrice,
+          quantity: d.quantity,
+          product: { name: d.product.name },
         };
       }),
     },
@@ -48,9 +47,9 @@ export default function UpdateForm({ setOpen, item, suppliers }: UpdateFormProps
 
       const previousItems = queryClient.getQueryData(date === null ? ['purchases'] : ['purchases', date]);
 
-      const { documentType, supplierId, purchaseDetails } = formData;
+      const { documentType, supplierId, voucherDetails } = formData;
 
-      const total = purchaseDetails.reduce((total, d) => total + d.unitPrice * d.quantity, 0);
+      const total = voucherDetails.reduce((total, d) => total + d.unitPrice * d.quantity, 0);
       const subtotal = total / 1.18;
       const tax = subtotal * 0.18;
 
@@ -58,26 +57,24 @@ export default function UpdateForm({ setOpen, item, suppliers }: UpdateFormProps
         isOptimistic?: boolean;
       } = {
         id: id,
-        supplierName: suppliers.find((s) => s.id === supplierId)?.name ?? '',
-        supplierDocumentNumber: suppliers.find((s) => s.id === supplierId)?.documentNumber ?? '',
-        supplier: suppliers.find((s) => s.id === supplierId),
-        total: total,
-        subtotal: subtotal,
-        tax: tax,
-        documentType: documentType,
-        documentNumber: documentNumber,
+        supplier: { name: suppliers.find((s) => s.id === supplierId)?.name || '' },
         supplierId: supplierId,
-        purchaseDetails: purchaseDetails.map((d) => {
-          return {
-            id: d.id,
-            purchaseId: id,
-            productId: d.productId,
-            productName: d.productName,
-            quantity: d.quantity,
-            unitPrice: d.unitPrice,
-            createdAt: new Date(),
-          };
-        }),
+        voucher: {
+          documentType: documentType,
+          serie: '',
+          number: '',
+          total: total,
+          subtotal: subtotal,
+          tax: tax,
+          voucherDetails: voucherDetails.map((v) => {
+            return {
+              id: v.id,
+              unitPrice: v.unitPrice,
+              quantity: v.quantity,
+              product: v.product,
+            };
+          }),
+        },
         createdAt: createdAt,
         isOptimistic: true,
       };
